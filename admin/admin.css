@@ -84,6 +84,7 @@ input:focus, select:focus { outline: none; border-color: var(--ink); box-shadow:
 
 .list-head { margin-bottom: 16px; }
 .list-head p { margin: 0; }
+.version { text-align: center; color: var(--muted); font-size: .8rem; margin: 0; }
 .count { display: inline-block; min-width: 26px; padding: 0 8px; border-radius: 99px; background: var(--ink); color: #fff; font-size: .8rem; text-align: center; vertical-align: middle; }
 
 /* Items */
