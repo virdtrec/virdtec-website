@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /thank-you-page.html
+
+Sitemap: https://www.virdtec.com/sitemap.xml
