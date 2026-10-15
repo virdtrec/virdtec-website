@@ -1,0 +1,15 @@
+{
+  "updated": "2026-10-15T00:00:00.000Z",
+  "items": [
+    { "id": "golf-lake-1", "type": "image", "src": "images/web/proyek-golf-lake-1.jpg", "title": "Golf Lake Residence", "location": "Jakarta Barat", "category": "proyek" },
+    { "id": "golf-lake-2", "type": "image", "src": "images/web/proyek-golf-lake-2.jpg", "title": "Golf Lake Residence", "location": "Jakarta Barat", "category": "proyek" },
+    { "id": "cijantung", "type": "image", "src": "images/web/proyek-cijantung.jpg", "title": "Cijantung", "location": "Jakarta Timur", "category": "proyek" },
+    { "id": "bsd", "type": "image", "src": "images/web/proyek-bsd.jpg", "title": "BSD", "location": "Tangerang Selatan", "category": "proyek" },
+    { "id": "intercon", "type": "image", "src": "images/web/proyek-intercon.jpg", "title": "Perumahan Intercon", "location": "Jakarta Barat", "category": "proyek" },
+    { "id": "casa-jardin", "type": "image", "src": "images/web/proyek-casa-jardin.jpg", "title": "Casa Jardin Residence", "location": "Jakarta Barat", "category": "proyek" },
+    { "id": "teknisi-instalasi", "type": "image", "src": "images/web/teknisi-instalasi.jpg", "title": "Proses instalasi wallcharger", "location": "", "category": "instalasi" },
+    { "id": "teknisi-grounding", "type": "image", "src": "images/web/teknisi-grounding.jpg", "title": "Pemasangan grounding", "location": "", "category": "instalasi" },
+    { "id": "wallcharger-virdtec", "type": "image", "src": "images/web/wallcharger-virdtec.jpg", "title": "Wallcharger ViRdtec + panel proteksi", "location": "", "category": "produk" },
+    { "id": "wallcharger-panel", "type": "image", "src": "images/web/wallcharger-panel.jpg", "title": "Wallcharger dengan box panel", "location": "", "category": "produk" }
+  ]
+}
