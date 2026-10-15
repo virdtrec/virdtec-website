@@ -22,7 +22,11 @@
     if (e.key === 'Escape') setNav(false);
   });
 
-  function onScroll() { header.classList.toggle('is-scrolled', window.scrollY > 8); }
+  var toTop = document.querySelector('.to-top');
+  function onScroll() {
+    header.classList.toggle('is-scrolled', window.scrollY > 8);
+    toTop.classList.toggle('is-visible', window.scrollY > 600);
+  }
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
