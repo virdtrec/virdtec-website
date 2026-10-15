@@ -1,3 +1,5 @@
+# Semua mesin pencari dan crawler AI (Googlebot, Bingbot, OAI-SearchBot,
+# GPTBot, PerplexityBot, ClaudeBot, Google-Extended, dll.) diizinkan.
 User-agent: *
 Disallow: /admin/
 Disallow: /thank-you-page.html
