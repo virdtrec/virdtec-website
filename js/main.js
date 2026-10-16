@@ -62,6 +62,28 @@
     return it.thumb || it.src;
   }
 
+  // If an image fails to load (e.g. a stale/cached response from the host),
+  // fall back to the full-size file, then to the copy in the GitHub repo.
+  var RAW = 'https://raw.githubusercontent.com/virdtrec/virdtec-website/main/';
+  function fallbacks(it, first) {
+    var list = [];
+    [first, it.src].forEach(function (u) {
+      if (u && !/^https?:/.test(u)) {
+        if (list.indexOf(u) < 0) list.push(u);
+      }
+    });
+    list.slice().forEach(function (u) { list.push(RAW + u.replace(/^\/+/, '').replace(/\?.*$/, '')); });
+    return list.slice(1);
+  }
+  function onImgError(e) {
+    var img = e.target;
+    if (img.tagName !== 'IMG' || !img.dataset.fallbacks) return;
+    var rest = img.dataset.fallbacks.split('|').filter(Boolean);
+    if (!rest.length) return;
+    img.dataset.fallbacks = rest.slice(1).join('|');
+    img.src = rest[0];
+  }
+
   function render() {
     if (!items.length) {
       grid.innerHTML = '<p class="gallery-empty">Belum ada foto atau video.</p>';
@@ -70,7 +92,7 @@
     grid.innerHTML = items.map(function (it, i) {
       var t = thumbOf(it);
       var media = t
-        ? '<img src="' + esc(t) + '" alt="' + esc(it.title || 'Galeri ViRdtec') + '" loading="lazy" decoding="async">'
+        ? '<img src="' + esc(t) + '" data-fallbacks="' + esc(it.type === 'image' ? fallbacks(it, t).join('|') : '') + '" alt="' + esc(it.title || 'Galeri ViRdtec') + '" loading="lazy" decoding="async">'
         : '<video src="' + esc(it.src) + '#t=0.5" muted playsinline preload="metadata"></video>';
       var cap = (it.title || it.location)
         ? '<figcaption>' + (it.title ? '<strong>' + esc(it.title) + '</strong>' : '') + (it.location ? '<span>' + esc(it.location) + '</span>' : '') + '</figcaption>'
@@ -96,6 +118,8 @@
     if (!visible.length) grid.insertAdjacentHTML('beforeend', '<p class="gallery-empty gallery-filter-empty">Belum ada konten di kategori ini.</p>');
   }
 
+  grid.addEventListener('error', onImgError, true);
+
   filters.forEach(function (btn) {
     btn.addEventListener('click', function () {
       filters.forEach(function (b) { b.classList.remove('is-active'); b.setAttribute('aria-selected', 'false'); });
@@ -114,6 +138,7 @@
   var lbMedia = lb.querySelector('.lb-media');
   var lbCap = lb.querySelector('.lb-caption');
   var current = -1; // position within `visible`
+  lbMedia.addEventListener('error', onImgError, true);
   var lastFocus = null;
 
   function show(pos) {
@@ -124,7 +149,7 @@
     } else if (it.type === 'video') {
       lbMedia.innerHTML = '<video src="' + esc(it.src) + '"' + (it.poster ? ' poster="' + esc(it.poster) + '"' : '') + ' controls autoplay playsinline></video>';
     } else {
-      lbMedia.innerHTML = '<img src="' + esc(it.src) + '" alt="' + esc(it.title || '') + '">';
+      lbMedia.innerHTML = '<img src="' + esc(it.src) + '" data-fallbacks="' + esc(fallbacks(it, it.src).join('|')) + '" alt="' + esc(it.title || '') + '">';
     }
     lbCap.innerHTML = (it.title ? esc(it.title) : '') + (it.location ? ' <span>· ' + esc(it.location) + '</span>' : '');
     var multi = visible.length > 1;
