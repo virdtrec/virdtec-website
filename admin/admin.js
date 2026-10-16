@@ -495,6 +495,7 @@
     storeToken(null);
     S.token = null;
     S.items = []; S.deletes = []; S.original = '[]';
+    if (window.virdtecStats) window.virdtecStats.show('gallery');
     showLogin();
   });
 
@@ -551,6 +552,9 @@
   window.addEventListener('beforeunload', function (e) {
     if (S.token && isDirty()) { e.preventDefault(); e.returnValue = ''; }
   });
+
+  // Dipakai admin/stats.js untuk memanggil /api/stats
+  window.virdtecAdmin = { token: function () { return S.token; } };
 
   // ---------------------------------------------------------------- init
   $('max-video').textContent = cfg.maxVideoMB;
