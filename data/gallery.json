@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-16T08:33:43.700Z",
+  "updated": "2026-10-16T08:35:41.258Z",
   "items": [
     {
       "id": "mvapnmecjtc8",
@@ -89,7 +89,7 @@
       "thumb": "images/web/thumb/teknisi-grounding.jpg?v=2",
       "title": "Pemasangan grounding",
       "location": "",
-      "category": "instalasi"
+      "category": "proyek"
     },
     {
       "id": "wallcharger-virdtec",
@@ -98,7 +98,7 @@
       "thumb": "images/web/thumb/wallcharger-virdtec.jpg?v=2",
       "title": "Wallcharger ViRdtec + panel proteksi",
       "location": "",
-      "category": "produk"
+      "category": "proyek"
     },
     {
       "id": "wallcharger-panel",
@@ -107,7 +107,7 @@
       "thumb": "images/web/thumb/wallcharger-panel.jpg?v=2",
       "title": "Wallcharger dengan box panel",
       "location": "",
-      "category": "produk"
+      "category": "instalasi"
     }
   ]
 }
