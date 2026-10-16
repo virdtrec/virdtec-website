@@ -31,3 +31,19 @@ Catatan:
 - Video upload maks. 25 MB. Video lebih panjang → upload ke YouTube lalu
   gunakan **Tambah video YouTube**.
 - Pengaturan (repo, branch, batas ukuran) ada di `admin/config.js`.
+
+## Statistik pengunjung (`/admin` → tab **Statistik**)
+
+Website mencatat kunjungan halaman dan klik tombol WhatsApp lewat
+Cloudflare Pages Functions (`functions/api/hit.js`) ke database
+**Cloudflare D1**. Ringkasannya dibaca admin lewat `functions/api/stats.js`
+(hanya untuk token GitHub milik akun di `ADMIN_GITHUB_USERS`, default `virdtrec`).
+
+Aktifkan sekali di dash.cloudflare.com:
+1. Storage & Databases → D1 SQL Database → Create → nama `virdtec-stats`.
+2. Workers & Pages → `virdtec-website` → Settings → Bindings → Add → D1 database,
+   Variable name `DB`, pilih `virdtec-stats` → Save.
+3. Deployments → Retry deployment.
+
+Tabel dibuat otomatis. Tanpa cookie; IP tidak disimpan (pengunjung dikenali
+dengan hash harian). Data lebih dari ±13 bulan dihapus otomatis.

@@ -200,4 +200,23 @@
     if (Math.abs(dx) > 50) show(current + (dx < 0 ? 1 : -1));
     x0 = null;
   });
+
+  // ---------- Statistik pengunjung (dibaca di /admin → Statistik) ----------
+  // Tanpa cookie. Admin bisa menonaktifkan pencatatan untuk perangkatnya sendiri.
+  function track(type) {
+    try { if (localStorage.getItem('virdtec_no_track')) return; } catch (e) { /* abaikan */ }
+    if (location.protocol !== 'https:' && location.hostname !== 'localhost') return;
+    var utm = '';
+    try { utm = new URLSearchParams(location.search).get('utm_source') || ''; } catch (e) { /* abaikan */ }
+    var data = JSON.stringify({ t: type, p: location.pathname, r: document.referrer, u: utm });
+    try {
+      if (navigator.sendBeacon && navigator.sendBeacon('/api/hit', data)) return;
+      fetch('/api/hit', { method: 'POST', body: data, keepalive: true, headers: { 'Content-Type': 'text/plain' } }).catch(function () {});
+    } catch (e) { /* abaikan */ }
+  }
+  track('view');
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href*="wa.me/"]');
+    if (a) track('wa');
+  });
 })();
