@@ -43,7 +43,8 @@ Aktifkan sekali di dash.cloudflare.com:
 1. Storage & Databases → D1 SQL Database → Create → nama `virdtec-stats`.
 2. Workers & Pages → `virdtec-website` → Settings → Bindings → Add → D1 database,
    Variable name `DB`, pilih `virdtec-stats` → Save.
-3. Deployments → Retry deployment.
+3. Deploy ulang: Deployments → deployment teratas → Retry deployment,
+   atau cukup merge pull request apa pun ke `main` (Cloudflare otomatis deploy ulang).
 
 Tabel dibuat otomatis. Tanpa cookie; IP tidak disimpan (pengunjung dikenali
 dengan hash harian). Data lebih dari ±13 bulan dihapus otomatis.
