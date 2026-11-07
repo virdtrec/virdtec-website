@@ -1,15 +1,6 @@
 {
-  "updated": "2026-11-07T11:51:59.925Z",
+  "updated": "2026-11-07T11:52:16.789Z",
   "items": [
-    {
-      "id": "mw6cebvznuv5",
-      "type": "image",
-      "src": "media/2026/11/technician-installing-ev-charger-breaker-mw6cebshkxv1.jpg",
-      "thumb": "media/2026/11/technician-installing-ev-charger-breaker-mw6cebshkxv1-thumb.jpg",
-      "title": "Golf Lake Residence",
-      "location": "Jakarta Barat",
-      "category": "proyek"
-    },
     {
       "id": "mw6c5j60klzz",
       "type": "image",
@@ -34,6 +25,15 @@
       "title": "Home Charging Mobil Listrik ⚡ Instalasi Wall Charger Rapi dan Aman",
       "location": "Jabodetabek",
       "category": "produk"
+    },
+    {
+      "id": "mw6cebvznuv5",
+      "type": "image",
+      "src": "media/2026/11/technician-installing-ev-charger-breaker-mw6cebshkxv1.jpg",
+      "thumb": "media/2026/11/technician-installing-ev-charger-breaker-mw6cebshkxv1-thumb.jpg",
+      "title": "Golf Lake Residence",
+      "location": "Jakarta Barat",
+      "category": "proyek"
     },
     {
       "id": "mvct1vzze4q8",
