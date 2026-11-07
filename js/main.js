@@ -273,8 +273,11 @@
 
   // ---------- Statistik pengunjung (dibaca di /admin → Statistik) ----------
   // Tanpa cookie. Admin bisa menonaktifkan pencatatan untuk perangkatnya sendiri.
+  function noTrack() {
+    try { return !!localStorage.getItem('virdtec_no_track'); } catch (e) { return false; }
+  }
   function track(type) {
-    try { if (localStorage.getItem('virdtec_no_track')) return; } catch (e) { /* abaikan */ }
+    if (noTrack()) return;
     if (location.protocol !== 'https:' && location.hostname !== 'localhost') return;
     var utm = '';
     try { utm = new URLSearchParams(location.search).get('utm_source') || ''; } catch (e) { /* abaikan */ }
@@ -284,9 +287,28 @@
       fetch('/api/hit', { method: 'POST', body: data, keepalive: true, headers: { 'Content-Type': 'text/plain' } }).catch(function () {});
     } catch (e) { /* abaikan */ }
   }
+
+  // ---------- Meta Pixel (ukur iklan Meta: kunjungan & klik WhatsApp) ----------
+  // Hanya di domain asli (bukan preview Cloudflare) dan tidak di perangkat admin yang memilih "Jangan hitung".
+  var PIXEL_ID = '1429023705914146';
+  var pixelOn = !noTrack() && /(^|\.)virdtec\.com$/.test(location.hostname);
+  if (pixelOn) {
+    /* eslint-disable */
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+    document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    /* eslint-enable */
+    window.fbq('init', PIXEL_ID);
+    window.fbq('track', 'PageView');
+  }
+
   track('view');
   document.addEventListener('click', function (e) {
     var a = e.target.closest && e.target.closest('a[href*="wa.me/"]');
-    if (a) track('wa');
+    if (!a) return;
+    track('wa');
+    if (pixelOn && window.fbq) window.fbq('track', 'Contact', { content_name: 'WhatsApp' });
   });
 })();
