@@ -84,38 +84,100 @@
     img.src = rest[0];
   }
 
+  var PAGE_SIZE = 20;
+  var page = 1;
+  var pager = document.getElementById('gallery-pager');
+  var activeFilter = 'all';
+
+  function matches(it, f) {
+    if (f === 'all') return true;
+    if (f === 'video') return isVideo(it);
+    return (it.category || '') === f;
+  }
+
+  function itemHtml(it, i) {
+    var t = thumbOf(it);
+    var media = t
+      ? '<img src="' + esc(t) + '" data-fallbacks="' + esc(it.type === 'image' ? fallbacks(it, t).join('|') : '') + '" alt="' + esc(it.title || 'Galeri ViRdtec') + '" loading="lazy" decoding="async">'
+      : '<video src="' + esc(it.src) + '#t=0.5" muted playsinline preload="metadata"></video>';
+    var cap = (it.title || it.location)
+      ? '<figcaption>' + (it.title ? '<strong>' + esc(it.title) + '</strong>' : '') + (it.location ? '<span>' + esc(it.location) + '</span>' : '') + '</figcaption>'
+      : '';
+    return '<figure class="g-item" role="button" tabindex="0" data-index="' + i + '">' +
+      media +
+      (isVideo(it) ? '<span class="g-play" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#i-play"/></svg></span><span class="g-badge">Video</span>' : '') +
+      cap + '</figure>';
+  }
+
+  function pageCount() { return Math.max(1, Math.ceil(visible.length / PAGE_SIZE)); }
+
+  // `visible` = all items matching the filter (the lightbox steps through all of them);
+  // the grid shows only the current page of it.
   function render() {
     if (!items.length) {
       grid.innerHTML = '<p class="gallery-empty">Belum ada foto atau video.</p>';
+      pager.hidden = true;
       return;
     }
-    grid.innerHTML = items.map(function (it, i) {
-      var t = thumbOf(it);
-      var media = t
-        ? '<img src="' + esc(t) + '" data-fallbacks="' + esc(it.type === 'image' ? fallbacks(it, t).join('|') : '') + '" alt="' + esc(it.title || 'Galeri ViRdtec') + '" loading="lazy" decoding="async">'
-        : '<video src="' + esc(it.src) + '#t=0.5" muted playsinline preload="metadata"></video>';
-      var cap = (it.title || it.location)
-        ? '<figcaption>' + (it.title ? '<strong>' + esc(it.title) + '</strong>' : '') + (it.location ? '<span>' + esc(it.location) + '</span>' : '') + '</figcaption>'
-        : '';
-      return '<figure class="g-item" role="button" tabindex="0" data-index="' + i + '" data-category="' + esc(it.category || '') + '" data-kind="' + (isVideo(it) ? 'video' : 'image') + '">' +
-        media +
-        (isVideo(it) ? '<span class="g-play" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#i-play"/></svg></span><span class="g-badge">Video</span>' : '') +
-        cap + '</figure>';
-    }).join('');
-    applyFilter(document.querySelector('.filters .chip.is-active').getAttribute('data-filter'));
+    visible = [];
+    items.forEach(function (it, i) { if (matches(it, activeFilter)) visible.push(i); });
+    page = Math.min(Math.max(1, page), pageCount());
+    if (!visible.length) {
+      grid.innerHTML = '<p class="gallery-empty">Belum ada konten di kategori ini.</p>';
+      pager.hidden = true;
+      return;
+    }
+    var start = (page - 1) * PAGE_SIZE;
+    grid.innerHTML = visible.slice(start, start + PAGE_SIZE).map(function (i) { return itemHtml(items[i], i); }).join('');
+    renderPager(start);
   }
 
-  function applyFilter(f) {
-    visible = [];
-    grid.querySelectorAll('.g-item').forEach(function (el) {
-      var show = f === 'all' ||
-        (f === 'video' ? el.getAttribute('data-kind') === 'video' : el.getAttribute('data-category') === f);
-      el.hidden = !show;
-      if (show) visible.push(Number(el.getAttribute('data-index')));
+  function pageList(n, cur) {
+    // 1 … 4 5 6 … 12
+    var out = [];
+    for (var p = 1; p <= n; p++) {
+      if (p === 1 || p === n || Math.abs(p - cur) <= 1) out.push(p);
+      else if (out[out.length - 1] !== '…') out.push('…');
+    }
+    return out;
+  }
+
+  function renderPager(start) {
+    var n = pageCount();
+    if (n <= 1) { pager.hidden = true; pager.innerHTML = ''; return; }
+    var end = Math.min(start + PAGE_SIZE, visible.length);
+    var html = '<p class="pager-info">Menampilkan ' + (start + 1) + '–' + end + ' dari ' + visible.length + '</p><div class="pager-buttons">';
+    html += '<button type="button" class="pager-btn pager-nav" data-page="' + (page - 1) + '"' + (page === 1 ? ' disabled' : '') + ' aria-label="Halaman sebelumnya">‹ <span>Sebelumnya</span></button>';
+    pageList(n, page).forEach(function (p) {
+      html += p === '…'
+        ? '<span class="pager-gap" aria-hidden="true">…</span>'
+        : '<button type="button" class="pager-btn' + (p === page ? ' is-active' : '') + '" data-page="' + p + '"' +
+          (p === page ? ' aria-current="page"' : '') + ' aria-label="Halaman ' + p + '">' + p + '</button>';
     });
-    var empty = grid.querySelector('.gallery-filter-empty');
-    if (empty) empty.remove();
-    if (!visible.length) grid.insertAdjacentHTML('beforeend', '<p class="gallery-empty gallery-filter-empty">Belum ada konten di kategori ini.</p>');
+    html += '<button type="button" class="pager-btn pager-nav" data-page="' + (page + 1) + '"' + (page === n ? ' disabled' : '') + ' aria-label="Halaman berikutnya"><span>Berikutnya</span> ›</button></div>';
+    pager.innerHTML = html;
+    pager.hidden = false;
+  }
+
+  function goToPage(p, scroll) {
+    page = p;
+    render();
+    if (scroll) {
+      document.getElementById('galeri').scrollIntoView({ block: 'start' });
+      var first = grid.querySelector('.g-item');
+      if (first) first.focus({ preventScroll: true });
+    }
+  }
+
+  pager.addEventListener('click', function (e) {
+    var b = e.target.closest('button[data-page]');
+    if (b && !b.disabled) goToPage(Number(b.getAttribute('data-page')), true);
+  });
+
+  function applyFilter(f) {
+    activeFilter = f;
+    page = 1;
+    render();
   }
 
   grid.addEventListener('error', onImgError, true);
@@ -169,7 +231,15 @@
     lb.hidden = true;
     lbMedia.innerHTML = '';
     document.body.style.overflow = '';
-    if (lastFocus) lastFocus.focus();
+    var p = current >= 0 ? Math.floor(current / PAGE_SIZE) + 1 : page;
+    if (p !== page) {
+      // lightbox stepped onto another page: show that page and focus the item
+      goToPage(p, false);
+      var el = grid.querySelector('.g-item[data-index="' + visible[current] + '"]');
+      if (el) { el.scrollIntoView({ block: 'center' }); el.focus({ preventScroll: true }); }
+    } else if (lastFocus) {
+      lastFocus.focus();
+    }
   }
 
   grid.addEventListener('click', function (e) {
@@ -203,8 +273,11 @@
 
   // ---------- Statistik pengunjung (dibaca di /admin → Statistik) ----------
   // Tanpa cookie. Admin bisa menonaktifkan pencatatan untuk perangkatnya sendiri.
+  function noTrack() {
+    try { return !!localStorage.getItem('virdtec_no_track'); } catch (e) { return false; }
+  }
   function track(type) {
-    try { if (localStorage.getItem('virdtec_no_track')) return; } catch (e) { /* abaikan */ }
+    if (noTrack()) return;
     if (location.protocol !== 'https:' && location.hostname !== 'localhost') return;
     var utm = '';
     try { utm = new URLSearchParams(location.search).get('utm_source') || ''; } catch (e) { /* abaikan */ }
@@ -214,9 +287,28 @@
       fetch('/api/hit', { method: 'POST', body: data, keepalive: true, headers: { 'Content-Type': 'text/plain' } }).catch(function () {});
     } catch (e) { /* abaikan */ }
   }
+
+  // ---------- Meta Pixel (ukur iklan Meta: kunjungan & klik WhatsApp) ----------
+  // Hanya di domain asli (bukan preview Cloudflare) dan tidak di perangkat admin yang memilih "Jangan hitung".
+  var PIXEL_ID = '1429023705914146';
+  var pixelOn = !noTrack() && /(^|\.)virdtec\.com$/.test(location.hostname);
+  if (pixelOn) {
+    /* eslint-disable */
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+    document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    /* eslint-enable */
+    window.fbq('init', PIXEL_ID);
+    window.fbq('track', 'PageView');
+  }
+
   track('view');
   document.addEventListener('click', function (e) {
     var a = e.target.closest && e.target.closest('a[href*="wa.me/"]');
-    if (a) track('wa');
+    if (!a) return;
+    track('wa');
+    if (pixelOn && window.fbq) window.fbq('track', 'Contact', { content_name: 'WhatsApp' });
   });
 })();
