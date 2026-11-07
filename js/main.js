@@ -290,7 +290,7 @@
 
   // ---------- Meta Pixel (ukur iklan Meta: kunjungan & klik WhatsApp) ----------
   // Hanya di domain asli (bukan preview Cloudflare) dan tidak di perangkat admin yang memilih "Jangan hitung".
-  var PIXEL_ID = '1429023705914146';
+  var PIXEL_ID = '1759222391834741';
   var pixelOn = !noTrack() && /(^|\.)virdtec\.com$/.test(location.hostname);
   if (pixelOn) {
     /* eslint-disable */
