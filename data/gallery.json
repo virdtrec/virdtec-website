@@ -1,6 +1,14 @@
 {
-  "updated": "2026-11-07T12:30:13.177Z",
+  "updated": "2026-11-08T05:05:30.412Z",
   "items": [
+    {
+      "id": "mw7dbyn3mk6c",
+      "type": "youtube",
+      "youtubeId": "nA0qjgeU5ds",
+      "title": "Larangan",
+      "location": "Tangerang",
+      "category": "proyek"
+    },
     {
       "id": "mw6dshfjuzf8",
       "type": "image",
