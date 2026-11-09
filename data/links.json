@@ -1,13 +1,70 @@
 {
-  "updated": "2026-11-09T00:00:00.000Z",
+  "updated": "2026-11-09T16:38:22.729Z",
   "title": "EV Charger & Instalasi Wallcharger",
   "subtitle": "Termasuk panel proteksi & grounding · Bergaransi\nMelayani Jabodetabek",
   "links": [
-    { "id": "wa", "label": "Konsultasi Gratis via WhatsApp", "sub": "Kirim foto lokasi & panel listrik Anda", "url": "https://wa.me/6289501816060?text=Halo%20ViRdtec%2C%20saya%20lihat%20dari%20Instagram%20dan%20ingin%20konsultasi%20instalasi%20EV%20charger.", "icon": "whatsapp", "style": "primary", "show": true },
-    { "id": "galeri", "label": "Lihat Hasil Pemasangan", "sub": "Galeri proyek & video", "url": "/?utm_source=instagram&utm_medium=bio#galeri", "icon": "gallery", "style": "normal", "show": true },
-    { "id": "layanan", "label": "Layanan & Produk", "sub": "EV charger, instalasi, V2L", "url": "/?utm_source=instagram&utm_medium=bio#layanan", "icon": "bolt", "style": "normal", "show": true },
-    { "id": "faq", "label": "Pertanyaan Umum (FAQ)", "sub": "Area layanan, garansi, cara pemesanan", "url": "/?utm_source=instagram&utm_medium=bio#faq", "icon": "faq", "style": "normal", "show": true },
-    { "id": "web", "label": "Website ViRdtec", "sub": "www.virdtec.com", "url": "/?utm_source=instagram&utm_medium=bio", "icon": "globe", "style": "normal", "show": true },
-    { "id": "fb", "label": "Facebook ViRdtec", "sub": "Update proyek terbaru", "url": "https://www.facebook.com/profile.php?id=61590403853435", "icon": "facebook", "style": "normal", "show": true }
+    {
+      "id": "wa",
+      "label": "Konsultasi Gratis via WhatsApp",
+      "sub": "Kirim foto lokasi & panel listrik Anda",
+      "url": "https://wa.me/6289501816060?text=Halo%20ViRdtec%2C%20saya%20lihat%20dari%20Instagram%20dan%20ingin%20konsultasi%20instalasi%20EV%20charger.",
+      "icon": "whatsapp",
+      "style": "primary",
+      "show": true
+    },
+    {
+      "id": "galeri",
+      "label": "Lihat Hasil Pemasangan",
+      "sub": "Galeri proyek & video",
+      "url": "/?utm_source=instagram&utm_medium=bio#galeri",
+      "icon": "gallery",
+      "style": "normal",
+      "show": true
+    },
+    {
+      "id": "layanan",
+      "label": "Layanan & Produk",
+      "sub": "EV charger, instalasi, V2L",
+      "url": "/?utm_source=instagram&utm_medium=bio#layanan",
+      "icon": "bolt",
+      "style": "normal",
+      "show": true
+    },
+    {
+      "id": "faq",
+      "label": "Pertanyaan Umum (FAQ)",
+      "sub": "Area layanan, garansi, cara pemesanan",
+      "url": "/?utm_source=instagram&utm_medium=bio#faq",
+      "icon": "faq",
+      "style": "normal",
+      "show": true
+    },
+    {
+      "id": "web",
+      "label": "Website ViRdtec",
+      "sub": "www.virdtec.com",
+      "url": "/?utm_source=instagram&utm_medium=bio",
+      "icon": "globe",
+      "style": "normal",
+      "show": true
+    },
+    {
+      "id": "fb",
+      "label": "Facebook ViRdtec",
+      "sub": "Update proyek terbaru",
+      "url": "https://www.facebook.com/profile.php?id=61590403853435",
+      "icon": "facebook",
+      "style": "normal",
+      "show": true
+    },
+    {
+      "id": "mw9hf1xcit7g",
+      "label": "YouTube",
+      "sub": "Update Produk Terbaru",
+      "url": "https://youtube.com/@virdtec",
+      "icon": "youtube",
+      "style": "normal",
+      "show": true
+    }
   ]
 }
