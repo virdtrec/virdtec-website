@@ -80,8 +80,8 @@
     var box = $('lb-preview');
     box.textContent = '';
     var logo = el('img', 'lbp-logo');
-    logo.src = '../images/web/logo-light.png';
-    logo.alt = 'ViRdtec';
+    logo.src = '../images/web/logo-bulat-256.png';
+    logo.alt = 'Logo ViRdtec';
     box.appendChild(logo);
     box.appendChild(el('p', 'lbp-title', L.title));
     var sub = el('p', 'lbp-sub');
