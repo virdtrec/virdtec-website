@@ -283,7 +283,9 @@ textarea:focus, input[type=tel]:focus { outline: none; border-color: var(--ink);
 .lb-err { color: var(--red); font-size: .85rem; margin: 8px 0 0; min-height: 0; }
 .lb-err:empty { display: none; }
 .lb-item .item-actions { margin-top: 12px; }
-.lb-add { display: flex; gap: 10px; margin-top: 14px; }
+.lb-add-title { margin: 18px 0 2px; padding-top: 14px; border-top: 1px dashed var(--line); font-weight: 700; color: var(--ink); }
+.lb-add-hint { margin: 0; }
+.lb-add { display: flex; gap: 10px; margin-top: 10px; }
 .lb-add select { margin-top: 0; flex: 1; }
 .lb-preview-wrap { position: sticky; top: 120px; }
 .lb-preview-wrap p { margin: 0 0 6px; }
