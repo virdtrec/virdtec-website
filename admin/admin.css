@@ -254,3 +254,71 @@ h3 { font-size: 1rem; margin: 0 0 .3em; color: var(--ink); }
   .colchart { height: 180px; padding-left: 34px; }
   .cc-grid, .cc-cols, .cc-x { left: 34px; }
 }
+
+/* ===== Link Bio ===== */
+input[type=tel], textarea {
+  display: block; width: 100%; margin-top: .3rem; padding: .65rem .8rem;
+  border: 1px solid var(--line); border-radius: 9px; font: inherit; font-weight: 400; background: #fff; color: var(--text);
+}
+textarea { resize: vertical; }
+textarea:focus, input[type=tel]:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 3px rgba(17,18,20,.08); }
+#tab-links label { margin-top: 10px; }
+.lb-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.lb-head p { margin: 0; }
+.lb-head-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.lb-layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 20px; align-items: start; }
+.lb-edit { display: grid; gap: 20px; }
+.lb-list-head p { margin: 0 0 12px; }
+.lb-list { display: grid; gap: 12px; }
+.lb-item { border: 1px solid var(--line); border-radius: 12px; padding: 14px; background: #fff; }
+.lb-item.is-off { opacity: .55; background: #fafafa; }
+.lb-item-top { display: flex; align-items: center; gap: 10px; }
+.lb-item-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lb-chip { width: 34px; height: 34px; border-radius: 9px; background: #f0f1f3; color: var(--ink); display: grid; place-items: center; flex: none; }
+.lb-chip.is-primary { background: #25d366; color: #fff; }
+.lb-chip svg { width: 19px; height: 19px; }
+.lb-show { display: flex; align-items: center; gap: 6px; margin: 0 !important; font-weight: 600; white-space: nowrap; }
+.lb-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
+.lb-wa { background: #f1fbf4; border-radius: 10px; padding: 2px 10px 10px; margin-top: 10px; }
+.lb-err { color: var(--red); font-size: .85rem; margin: 8px 0 0; min-height: 0; }
+.lb-err:empty { display: none; }
+.lb-item .item-actions { margin-top: 12px; }
+.lb-add { display: flex; gap: 10px; margin-top: 14px; }
+.lb-add select { margin-top: 0; flex: 1; }
+.lb-preview-wrap { position: sticky; top: 120px; }
+.lb-preview-wrap p { margin: 0 0 6px; }
+.lb-preview {
+  border-radius: 22px; padding: 26px 16px; text-align: center; color: #fff;
+  background: radial-gradient(500px 220px at 50% -10%, rgba(227,6,19,.35), transparent 60%), linear-gradient(180deg, #111214, #1c1e22);
+  box-shadow: 0 16px 40px rgba(0,0,0,.18);
+}
+.lbp-logo { height: 24px; width: auto; display: block; margin: 0 auto 8px; }
+.lbp-title { margin: 0 0 4px; font-weight: 700; font-size: .95rem; }
+.lbp-sub { margin: 0 0 16px; font-size: .78rem; color: rgba(255,255,255,.7); }
+.lbp-btn {
+  display: flex; align-items: center; gap: 10px; text-align: left; background: #fff; color: #111214;
+  border-radius: 12px; padding: 10px 12px; margin-top: 8px; font-weight: 700; font-size: .85rem;
+}
+.lbp-btn small { display: block; font-weight: 500; font-size: .7rem; color: #6b7079; }
+.lbp-btn.is-primary { background: #25d366; color: #fff; }
+.lbp-btn.is-primary small { color: rgba(255,255,255,.9); }
+.lbp-ic { width: 28px; height: 28px; border-radius: 8px; background: #f2f3f5; display: grid; place-items: center; flex: none; }
+.lbp-btn.is-primary .lbp-ic { background: rgba(255,255,255,.2); }
+.lbp-ic svg { width: 16px; height: 16px; }
+@media (max-width: 960px) {
+  .lb-layout { grid-template-columns: 1fr; }
+  .lb-preview-wrap { position: static; max-width: 380px; }
+}
+@media (max-width: 560px) {
+  .lb-fields { grid-template-columns: 1fr; }
+  .lb-add { flex-direction: column; }
+}
+/* jaga agar kolom grid tidak melebar melebihi layar HP */
+.wrap { grid-template-columns: minmax(0, 1fr); }
+.lb-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.lb-fields > *, .lb-edit > *, .lb-layout > * { min-width: 0; }
+#tab-links select, #tab-links input, #tab-links textarea { max-width: 100%; min-width: 0; }
+@media (max-width: 960px) { .lb-layout { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 560px) { .lb-fields { grid-template-columns: minmax(0, 1fr); } }
+.lb-list { grid-template-columns: minmax(0, 1fr); }
+.lb-list > * { min-width: 0; }

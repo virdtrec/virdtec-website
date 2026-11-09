@@ -9,10 +9,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
-  <link rel="stylesheet" href="admin.css?v=20261016-1">
-  <script src="config.js?v=20261016-1"></script>
-  <script src="admin.js?v=20261016-1" defer></script>
-  <script src="stats.js?v=20261016-1" defer></script>
+  <link rel="stylesheet" href="admin.css?v=20261109-1">
+  <script src="config.js?v=20261109-1"></script>
+  <script src="admin.js?v=20261109-1" defer></script>
+  <script src="stats.js?v=20261109-1" defer></script>
+  <script src="../js/link-icons.js?v=20261109-1" defer></script>
+  <script src="links.js?v=20261109-1" defer></script>
 </head>
 <body>
   <!-- ===== LOGIN ===== -->
@@ -59,6 +61,7 @@
       <nav class="tabs" role="tablist" aria-label="Menu admin">
         <button class="tab is-active" type="button" role="tab" aria-selected="true" data-tab="gallery">Galeri</button>
         <button class="tab" type="button" role="tab" aria-selected="false" data-tab="stats">Statistik</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" data-tab="links">Link Bio</button>
       </nav>
     </header>
 
@@ -89,7 +92,69 @@
         </div>
         <div class="items" id="items"></div>
       </section>
-      <p class="version">Versi admin 4 · dengan statistik pengunjung</p>
+      <p class="version">Versi admin 5 · dengan statistik & link bio</p>
+    </main>
+
+    <main class="wrap" id="tab-links" hidden>
+      <section class="panel lb-head">
+        <div>
+          <h2>Halaman link bio</h2>
+          <p class="muted">Tombol di <b>virdtec.com/link</b> — dipasang di bio Instagram. Perubahan tampil ±1–3 menit setelah disimpan.</p>
+        </div>
+        <div class="lb-head-actions">
+          <a class="btn btn-light btn-sm" href="../link" target="_blank" rel="noopener">Lihat halaman</a>
+          <button class="btn btn-light btn-sm" id="lb-copy" type="button">Salin link untuk bio IG</button>
+        </div>
+      </section>
+
+      <p class="panel muted" id="lb-loading">Memuat…</p>
+
+      <div class="lb-layout" id="lb-body" hidden>
+        <div class="lb-edit">
+          <section class="panel">
+            <h3>Teks di atas tombol</h3>
+            <label>Judul<input type="text" id="lb-title" maxlength="80"></label>
+            <label>Keterangan (boleh 2 baris)<textarea id="lb-sub" rows="2" maxlength="200"></textarea></label>
+          </section>
+
+          <section class="panel">
+            <div class="lb-list-head">
+              <h3>Tombol</h3>
+              <p class="muted small">Urutan di sini = urutan di halaman. Tombol yang tidak dicentang "Tampilkan" disembunyikan tanpa dihapus.</p>
+            </div>
+            <div id="lb-list" class="lb-list"></div>
+            <div class="lb-add">
+              <select id="lb-preset" aria-label="Jenis tombol baru">
+                <option value="whatsapp">WhatsApp</option>
+                <option value="instagram">Instagram</option>
+                <option value="facebook">Facebook</option>
+                <option value="youtube">YouTube</option>
+                <option value="tiktok">TikTok</option>
+                <option value="maps">Google Maps (lokasi)</option>
+                <option value="review">Ulasan Google</option>
+                <option value="page">Halaman di website</option>
+                <option value="custom">Link lain</option>
+              </select>
+              <button class="btn btn-outline" id="lb-add" type="button">+ Tambah tombol</button>
+            </div>
+          </section>
+        </div>
+
+        <aside class="lb-preview-wrap">
+          <p class="muted small">Pratinjau</p>
+          <div class="lb-preview" id="lb-preview"></div>
+        </aside>
+      </div>
+
+      <div class="savebar" id="lb-savebar" hidden>
+        <div class="savebar-inner">
+          <span>Perubahan link bio belum disimpan</span>
+          <div class="savebar-actions">
+            <button class="btn btn-light btn-sm" id="lb-discard" type="button">Batalkan</button>
+            <button class="btn btn-primary" id="lb-save" type="button">Simpan &amp; Publikasikan</button>
+          </div>
+        </div>
+      </div>
     </main>
 
     <main class="wrap" id="tab-stats" hidden>
@@ -152,6 +217,7 @@
           <section class="panel"><h3>Browser</h3><div class="hb" id="st-browsers"></div></section>
           <section class="panel"><h3>Asal klik WhatsApp</h3><div class="hb" id="st-wa"></div></section>
           <section class="panel"><h3>Halaman dibuka</h3><div class="hb" id="st-pages"></div></section>
+          <section class="panel"><h3>Klik tombol link bio</h3><div class="hb" id="st-links"></div></section>
         </div>
 
         <section class="panel">

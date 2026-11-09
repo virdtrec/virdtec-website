@@ -44,9 +44,12 @@
       t.classList.toggle('is-active', on);
       t.setAttribute('aria-selected', String(on));
     });
-    $('tab-gallery').hidden = name !== 'gallery';
-    $('tab-stats').hidden = name !== 'stats';
+    document.querySelectorAll('main[id^="tab-"]').forEach(function (m) { m.hidden = m.id !== 'tab-' + name; });
+    // galeri punya bar simpan sendiri; sembunyikan saat tab lain dibuka
+    var sb = $('savebar');
+    if (sb) sb.style.display = name === 'gallery' ? '' : 'none';
     if (name === 'stats' && !loaded) load();
+    document.dispatchEvent(new CustomEvent('admin:tab', { detail: name }));
   }
   document.querySelectorAll('.tab').forEach(function (t) {
     t.addEventListener('click', function () { showTab(t.getAttribute('data-tab')); });
@@ -178,6 +181,9 @@
       return { k: r.k === '/' || r.k === '/index.html' ? 'Beranda (/)' : r.k, n: r.n };
     }), 'kali');
     renderList('st-wa', top.waSources, 'klik');
+    renderList('st-links', (top.linkClicks || []).map(function (r) {
+      return { k: String(r.k || '').replace(/^\/link → /, ''), n: r.n };
+    }), 'klik');
     renderRecent(data.recent || []);
   }
 
@@ -307,7 +313,8 @@
       var when = new Date(r.ts).toLocaleString('id-ID', { timeZone: 'Asia/Jakarta', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
       var top = el('div', 'rc-top');
       top.appendChild(el('span', 'rc-time', when + ' WIB'));
-      top.appendChild(el('span', 'rc-badge' + (r.type === 'wa' ? ' is-wa' : ''), r.type === 'wa' ? 'Klik WhatsApp' : 'Melihat website'));
+      top.appendChild(el('span', 'rc-badge' + (r.type === 'wa' ? ' is-wa' : ''),
+        r.type === 'wa' ? 'Klik WhatsApp' : r.type === 'link' ? 'Klik link bio' : 'Melihat website'));
       li.appendChild(top);
       li.appendChild(el('div', 'rc-main', placeName(r.city, r.country)));
       li.appendChild(el('div', 'rc-sub', [r.device, r.os, r.browser].filter(Boolean).join(' · ') + ' · dari ' + (r.source || 'Langsung')));
