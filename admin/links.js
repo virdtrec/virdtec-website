@@ -80,7 +80,7 @@
     var box = $('lb-preview');
     box.textContent = '';
     var logo = el('img', 'lbp-logo');
-    logo.src = '../images/web/logo-bulat-256.png';
+    logo.src = '../images/web/logo-putih-600.png';
     logo.alt = 'Logo ViRdtec';
     box.appendChild(logo);
     box.appendChild(el('p', 'lbp-title', L.title));
