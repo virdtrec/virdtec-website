@@ -1,0 +1,5 @@
+# Link pendek untuk bio media sosial → halaman link bio, dengan sumber tercatat di Statistik
+/ig      /link?utm_source=instagram&utm_medium=bio  302
+/fb      /link?utm_source=facebook&utm_medium=bio   302
+/yt      /link?utm_source=youtube&utm_medium=bio    302
+/tt      /link?utm_source=tiktok&utm_medium=bio     302
