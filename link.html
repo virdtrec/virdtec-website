@@ -148,9 +148,19 @@
     function render(data) {
       var icons = window.VIRDTEC_LINK_ICONS || {};
       var links = (data.links || []).filter(function (l) { return l.show !== false && l.label; });
+      var src = '';
+      try { src = new URLSearchParams(location.search).get('utm_source') || ''; } catch (e) { /* abaikan */ }
       var html = links.map(function (l) {
         var url = window.VIRDTEC_SAFE_URL(l.url);
         if (!url) return '';
+        // link ke halaman website ini ikut membawa sumber kunjungan (mis. dari virdtec.com/fb → facebook)
+        if (src && url.charAt(0) === '/') {
+          try {
+            var u = new URL(url, location.origin);
+            u.searchParams.set('utm_source', src);
+            url = u.pathname + u.search + u.hash;
+          } catch (e) { /* biarkan apa adanya */ }
+        }
         var ext = /^https?:\/\//i.test(url) && !/^https?:\/\/(www\.)?virdtec\.com/i.test(url);
         var ic = (icons[l.icon] || icons.link || { svg: '' }).svg;
         return '<a class="link' + (l.style === 'primary' ? ' wa' : '') + '" href="' + esc(url) + '"' +
