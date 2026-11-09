@@ -554,7 +554,10 @@
   });
 
   // Dipakai admin/stats.js untuk memanggil /api/stats
-  window.virdtecAdmin = { token: function () { return S.token; } };
+  window.virdtecAdmin = {
+    token: function () { return S.token; },
+    gh: gh, explain: explain, busy: busy, toast: toast, b64ToUtf8: b64ToUtf8, repo: REPO, cfg: cfg
+  };
 
   // ---------------------------------------------------------------- init
   $('max-video').textContent = cfg.maxVideoMB;

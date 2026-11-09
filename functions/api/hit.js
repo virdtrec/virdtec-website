@@ -109,7 +109,7 @@ async function record(db, request, body) {
     `INSERT INTO hits (ts, day, type, path, visitor, referrer, source, country, city, device, browser, os)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
   ).bind(
-    now, day, body.t === 'wa' ? 'wa' : 'view',
+    now, day, body.t === 'wa' || body.t === 'link' ? body.t : 'view',
     String(body.p || '/').slice(0, 200), visitor, ref || null,
     sourceOf(String(body.u || '').trim().toLowerCase(), ref),
     cf.country || null, cf.city || null,
