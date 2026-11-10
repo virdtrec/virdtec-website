@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jangan hitung perangkat ini – ViRdtec</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#111214">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png?v=2">
+  <style>
+    :root { --red: #e30613; --ink: #111214; --wa: #25d366; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 32px 16px;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: #fff;
+      background: radial-gradient(900px 400px at 50% -10%, rgba(227, 6, 19, .35), transparent 60%), var(--ink);
+    }
+    main { width: 100%; max-width: 440px; text-align: center; }
+    .logo { width: 200px; height: auto; display: block; margin: 0 auto 24px; }
+    .card { background: #fff; color: var(--ink); border-radius: 18px; padding: 24px 20px; box-shadow: 0 12px 30px rgba(0,0,0,.3); }
+    .status { font-size: 1.15rem; font-weight: 800; margin: 0 0 8px; }
+    .status.off { color: #0f6b34; }
+    .status.on { color: var(--red); }
+    p { line-height: 1.55; margin: 0 0 12px; color: #3a3d44; }
+    button {
+      font: inherit; font-weight: 700; border-radius: 999px; padding: 12px 20px; cursor: pointer; margin-top: 6px;
+      border: 1px solid #d9dbe0; background: #fff; color: var(--ink);
+    }
+    .help { text-align: left; margin-top: 20px; font-size: .92rem; color: rgba(255,255,255,.8); line-height: 1.6; }
+    .help b { color: #fff; }
+    .help ol { padding-left: 1.2rem; margin: 8px 0 0; }
+    code { background: rgba(255,255,255,.12); padding: 1px 6px; border-radius: 6px; }
+    a { color: #fff; }
+  </style>
+</head>
+<body>
+  <main>
+    <img class="logo" src="images/web/logo-putih-600.png" alt="ViRdtec" width="546" height="261">
+    <div class="card">
+      <p class="status" id="status">…</p>
+      <p id="desc"></p>
+      <button type="button" id="toggle"></button>
+    </div>
+    <div class="help">
+      <b>Untuk pemilik/tim ViRdtec.</b> Instagram, Facebook, YouTube dan WhatsApp membuka link dengan browser masing-masing,
+      jadi halaman ini perlu dibuka <b>sekali di setiap aplikasi</b> di HP Anda:
+      <ol>
+        <li>Kirim link <code>virdtec.com/jangan-hitung</code> ke diri sendiri (mis. lewat chat/DM di aplikasi itu).</li>
+        <li>Ketuk link tersebut di dalam aplikasi.</li>
+        <li>Pastikan muncul tulisan hijau <b>"tidak dihitung"</b>.</li>
+      </ol>
+      <p style="color:inherit;margin-top:10px">Kalau data aplikasi atau browser dihapus, ulangi langkah ini.</p>
+    </div>
+  </main>
+  <script>
+  (function () {
+    'use strict';
+    var KEY = 'virdtec_no_track', PREF = 'virdtec_track_pref';
+    var ok = true;
+    function get() { try { return !!localStorage.getItem(KEY); } catch (e) { ok = false; return false; } }
+    function set(v) {
+      try {
+        localStorage.setItem(PREF, 'set');
+        if (v) localStorage.setItem(KEY, '1'); else localStorage.removeItem(KEY);
+      } catch (e) { ok = false; }
+    }
+    // Membuka halaman ini otomatis = jangan hitung (kecuali datang dari tombol "Hitung lagi")
+    if (!/[?&]hitung=1/.test(location.search)) set(true);
+    function render() {
+      var off = get();
+      var st = document.getElementById('status');
+      if (!ok) {
+        st.className = 'status on';
+        st.textContent = 'Browser ini tidak mengizinkan penyimpanan';
+        document.getElementById('desc').textContent = 'Kunjungan dari browser/aplikasi ini mungkin tetap terhitung.';
+        document.getElementById('toggle').hidden = true;
+        return;
+      }
+      st.className = 'status ' + (off ? 'off' : 'on');
+      st.textContent = off ? '✅ Perangkat/aplikasi ini tidak dihitung' : 'Perangkat/aplikasi ini ikut dihitung';
+      document.getElementById('desc').textContent = off
+        ? 'Kunjungan dari browser/aplikasi ini tidak masuk Statistik website dan tidak dikirim ke Meta Pixel.'
+        : 'Kunjungan dari browser/aplikasi ini masuk Statistik website dan Meta Pixel seperti pengunjung biasa.';
+      document.getElementById('toggle').textContent = off ? 'Hitung lagi' : 'Jangan hitung';
+    }
+    document.getElementById('toggle').addEventListener('click', function () { set(!get()); render(); });
+    render();
+  })();
+  </script>
+</body>
+</html>
