@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-09T19:07:30.972Z",
+  "updated": "2026-11-10T02:39:45.872Z",
   "title": "EV Charger & Instalasi Wallcharger",
   "subtitle": "Termasuk Panel Proteksi & Grounding · Bergaransi ·\nPengajuan kWh Baru PLN\nMelayani Jabodetabek",
   "links": [
@@ -33,7 +33,7 @@
     {
       "id": "faq",
       "label": "Pertanyaan Umum (FAQ)",
-      "sub": "Area layanan, garansi, cara pemesanan",
+      "sub": "Area layanan, Garansi, Cara Pemesanan",
       "url": "/?utm_source=instagram&utm_medium=bio#faq",
       "icon": "faq",
       "style": "normal",
@@ -59,7 +59,7 @@
     },
     {
       "id": "mw9hf1xcit7g",
-      "label": "YouTube",
+      "label": "YouTube ViRdtec",
       "sub": "Update Proyek Terbaru",
       "url": "https://youtube.com/@virdtec",
       "icon": "youtube",
