@@ -181,6 +181,9 @@
       return { k: r.k === '/' || r.k === '/index.html' ? 'Beranda (/)' : r.k, n: r.n };
     }), 'kali');
     renderList('st-wa', top.waSources, 'klik');
+    renderList('st-gallery', (top.galleryViews || []).map(function (r) {
+      return { k: String(r.k || '').replace(/^\/galeri → /, ''), n: r.n };
+    }), 'kali dibuka');
     renderList('st-links', (top.linkClicks || []).map(function (r) {
       return { k: String(r.k || '').replace(/^\/link → /, ''), n: r.n };
     }), 'klik');
@@ -314,7 +317,7 @@
       var top = el('div', 'rc-top');
       top.appendChild(el('span', 'rc-time', when + ' WIB'));
       top.appendChild(el('span', 'rc-badge' + (r.type === 'wa' ? ' is-wa' : ''),
-        r.type === 'wa' ? 'Klik WhatsApp' : r.type === 'link' ? 'Klik link bio' : 'Melihat website'));
+        r.type === 'wa' ? 'Klik WhatsApp' : r.type === 'link' ? 'Klik link bio' : r.type === 'gallery' ? 'Buka galeri' : 'Melihat website'));
       li.appendChild(top);
       li.appendChild(el('div', 'rc-main', placeName(r.city, r.country)));
       li.appendChild(el('div', 'rc-sub', [r.device, r.os, r.browser].filter(Boolean).join(' · ') + ' · dari ' + (r.source || 'Langsung')));

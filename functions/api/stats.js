@@ -55,7 +55,7 @@ async function query(db, days) {
   ).bind(start);
   const visitors = 'COUNT(DISTINCT day || visitor)';
 
-  const [totals, daily, sources, devices, locations, browsers, oses, pages, waSources, linkClicks, recent] = await db.batch([
+  const [totals, daily, sources, devices, locations, browsers, oses, pages, waSources, linkClicks, galleryViews, recent] = await db.batch([
     db.prepare(
       `SELECT SUM(type = 'view') AS views,
               COUNT(DISTINCT CASE WHEN type = 'view' THEN day || visitor END) AS visitors,
@@ -83,6 +83,10 @@ async function query(db, days) {
        WHERE type = 'link' AND day >= ?1 GROUP BY k ORDER BY n DESC LIMIT 12`
     ).bind(start),
     db.prepare(
+      `SELECT path AS k, COUNT(*) AS n FROM hits
+       WHERE type = 'gallery' AND day >= ?1 GROUP BY k ORDER BY n DESC LIMIT 12`
+    ).bind(start),
+    db.prepare(
       `SELECT ts, type, path, source, device, browser, os, city, country
        FROM hits ORDER BY id DESC LIMIT 25`
     )
@@ -95,7 +99,8 @@ async function query(db, days) {
     top: {
       sources: sources.results, devices: devices.results, locations: locations.results,
       browsers: browsers.results, os: oses.results, pages: pages.results, waSources: waSources.results,
-      linkClicks: linkClicks.results
+      linkClicks: linkClicks.results,
+      galleryViews: galleryViews.results
     },
     recent: recent.results
   };
