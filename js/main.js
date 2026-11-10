@@ -203,9 +203,19 @@
   lbMedia.addEventListener('error', onImgError, true);
   var lastFocus = null;
 
+  var galleryViewed = {};
+  function trackGallery(it) {
+    var key = it.id || it.src || it.youtubeId;
+    if (!key || galleryViewed[key]) return;
+    galleryViewed[key] = true;
+    var label = (it.title || 'Tanpa judul') + (isVideo(it) ? ' · Video' : '');
+    track('gallery', '/galeri → ' + label.slice(0, 90));
+  }
+
   function show(pos) {
     current = (pos + visible.length) % visible.length;
     var it = items[visible[current]];
+    trackGallery(it);
     if (it.type === 'youtube') {
       lbMedia.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + encodeURIComponent(it.youtubeId) + '?autoplay=1&rel=0" title="' + esc(it.title || 'Video') + '" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>';
     } else if (it.type === 'video') {
@@ -276,12 +286,12 @@
   function noTrack() {
     try { return !!localStorage.getItem('virdtec_no_track'); } catch (e) { return false; }
   }
-  function track(type) {
+  function track(type, path) {
     if (noTrack()) return;
     if (location.protocol !== 'https:' && location.hostname !== 'localhost') return;
     var utm = '';
     try { utm = new URLSearchParams(location.search).get('utm_source') || ''; } catch (e) { /* abaikan */ }
-    var data = JSON.stringify({ t: type, p: location.pathname, r: document.referrer, u: utm });
+    var data = JSON.stringify({ t: type, p: path || location.pathname, r: document.referrer, u: utm });
     try {
       if (navigator.sendBeacon && navigator.sendBeacon('/api/hit', data)) return;
       fetch('/api/hit', { method: 'POST', body: data, keepalive: true, headers: { 'Content-Type': 'text/plain' } }).catch(function () {});
