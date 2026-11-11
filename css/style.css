@@ -282,6 +282,8 @@ p { margin: 0 0 1em; }
 .to-top.is-visible { opacity: 1; visibility: visible; transform: none; }
 .to-top:hover { background: var(--red); }
 .to-top svg { width: 22px; height: 22px; }
+/* On phones the footer text is full width: leave room so the floating buttons never cover it */
+@media (max-width: 820px) { .site-footer.has-fab { padding-bottom: 170px; } }
 
 /* Reveal on scroll */
 .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
