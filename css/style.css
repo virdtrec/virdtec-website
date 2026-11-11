@@ -247,9 +247,12 @@ p { margin: 0 0 1em; }
   color: rgba(255,255,255,.85); border-radius: 24px; padding: clamp(32px, 6vw, 64px);
 }
 .cta h2 { color: #fff; }
-.cta-qr { margin: 0; text-align: center; background: #fff; border-radius: var(--radius); padding: 14px; color: var(--muted); font-size: .85rem; }
-.cta-qr img { width: 200px; height: 200px; object-fit: cover; border-radius: 10px; }
-.cta-qr figcaption { margin-top: 8px; }
+.cta-qr { margin: 0; text-align: center; background: #fff; border-radius: var(--radius); padding: 18px 18px 14px; color: var(--muted); font-size: .85rem; box-shadow: 0 12px 30px rgba(0,0,0,.25); }
+.cta-qr img { display: block; width: 200px; height: 200px; margin: 0 auto; }
+.cta-qr figcaption { margin-top: 10px; line-height: 1.35; }
+.cta-qr figcaption strong { display: block; color: var(--ink); font-size: 1rem; letter-spacing: .3px; }
+/* On a phone the visitor is already on the phone that would scan it: the WhatsApp buttons do the job */
+@media (max-width: 600px) { .cta-qr { display: none; } }
 .socials { list-style: none; padding: 0; margin: 1.6rem 0 0; display: flex; flex-wrap: wrap; gap: 1.4rem; }
 .socials a { display: inline-flex; align-items: center; gap: .5rem; text-decoration: none; color: #fff; font-weight: 600; }
 .socials a:hover { color: var(--red); }
@@ -333,5 +336,4 @@ p { margin: 0 0 1em; }
   .lb-prev, .lb-next { position: absolute; bottom: 20px; }
   .lb-prev { left: calc(50% - 60px); }
   .lb-next { right: calc(50% - 60px); }
-  .cta-qr img { width: 160px; height: 160px; }
 }
