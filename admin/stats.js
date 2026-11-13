@@ -307,20 +307,71 @@
     });
   }
 
+  // Several events from one person (same daily visitor id, close together) form one visit
+  var VISIT_GAP = 30 * 60e3, MAX_VISITS = 25;
+  function groupVisits(rows) {
+    var visits = [], open = {};
+    rows.forEach(function (r) { // rows arrive newest first
+      var key = (r.visitor || '') + '|' + [r.device, r.os, r.browser, r.city].join('|');
+      var v = r.visitor && open[key];
+      if (v && v.first - r.ts <= VISIT_GAP) { v.events.push(r); v.first = r.ts; return; }
+      v = { last: r.ts, first: r.ts, events: [r], head: r };
+      visits.push(v);
+      if (r.visitor) open[key] = v;
+    });
+    visits.forEach(function (v) { v.events.reverse(); }); // oldest first inside a visit
+    return visits.slice(0, MAX_VISITS);
+  }
+  function afterArrow(path) {
+    var i = String(path || '').indexOf('→');
+    return i >= 0 ? String(path).slice(i + 1).trim() : '';
+  }
+  function pageName(path) {
+    var p = String(path || '/');
+    if (p === '/' || p === '/index.html') return 'Beranda';
+    if (/^\/link/.test(p)) return 'Halaman Link Bio';
+    if (/^\/privasi/.test(p)) return 'Kebijakan privasi';
+    return p;
+  }
+  function eventLabel(r) {
+    if (r.type === 'wa') return 'Klik WhatsApp';
+    if (r.type === 'link') return 'Klik link bio: ' + (afterArrow(r.path) || '-');
+    if (r.type === 'gallery') return 'Buka galeri: ' + (afterArrow(r.path) || '-');
+    return 'Melihat ' + pageName(r.path);
+  }
+  function fmtTime(ts, withDay) {
+    return new Date(ts).toLocaleString('id-ID', withDay
+      ? { timeZone: 'Asia/Jakarta', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }
+      : { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit' });
+  }
+
   function renderRecent(rows) {
     var ul = $('st-recent');
     ul.textContent = '';
     if (!rows.length) { ul.appendChild(el('li', 'muted small', 'Belum ada kunjungan tercatat.')); return; }
-    rows.forEach(function (r) {
+    groupVisits(rows).forEach(function (v) {
       var li = el('li', 'rc');
-      var when = new Date(r.ts).toLocaleString('id-ID', { timeZone: 'Asia/Jakarta', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+      var hasWa = v.events.some(function (e) { return e.type === 'wa'; });
+      var when = fmtTime(v.first, true) + (v.last - v.first >= 60e3 ? '–' + fmtTime(v.last, false) : '') + ' WIB';
       var top = el('div', 'rc-top');
-      top.appendChild(el('span', 'rc-time', when + ' WIB'));
-      top.appendChild(el('span', 'rc-badge' + (r.type === 'wa' ? ' is-wa' : ''),
-        r.type === 'wa' ? 'Klik WhatsApp' : r.type === 'link' ? 'Klik link bio' : r.type === 'gallery' ? 'Buka galeri' : 'Melihat website'));
+      top.appendChild(el('span', 'rc-time', when));
+      top.appendChild(el('span', 'rc-badge' + (hasWa ? ' is-wa' : ''),
+        hasWa ? 'Klik WhatsApp' : v.events.length > 1 ? v.events.length + ' aktivitas' : eventLabel(v.head).split(':')[0]));
       li.appendChild(top);
-      li.appendChild(el('div', 'rc-main', placeName(r.city, r.country)));
-      li.appendChild(el('div', 'rc-sub', [r.device, r.os, r.browser].filter(Boolean).join(' · ') + ' · dari ' + (r.source || 'Langsung')));
+      var h = v.head;
+      li.appendChild(el('div', 'rc-main', placeName(h.city, h.country)));
+      li.appendChild(el('div', 'rc-sub', [h.device, h.os, h.browser].filter(Boolean).join(' · ') + ' · dari ' + (v.events[0].source || 'Langsung')));
+      if (v.events.length > 1) {
+        var ol = el('ol', 'rc-steps');
+        v.events.forEach(function (e, i) {
+          // A WhatsApp button on the link page records "link bio" and "WhatsApp" for one tap: show it once
+          var prev = v.events[i - 1];
+          if (e.type === 'wa' && prev && prev.type === 'link' && e.ts - prev.ts < 5e3) return;
+          var item = el('li', e.type === 'wa' || (e.type === 'link' && /whatsapp/i.test(e.path)) ? 'is-wa' : '', eventLabel(e));
+          ol.appendChild(item);
+        });
+        li.appendChild(ol);
+      }
       ul.appendChild(li);
     });
   }

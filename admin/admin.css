@@ -241,6 +241,12 @@ h3 { font-size: 1rem; margin: 0 0 .3em; color: var(--ink); }
 .rc-badge.is-wa { background: #e6f6ec; color: #0f6b34; }
 .rc-main { font-weight: 600; color: var(--ink); margin-top: 2px; }
 .rc-sub { font-size: .85rem; color: var(--muted); }
+.rc-steps { margin: 8px 0 0; padding: 0 0 0 4px; list-style: none; display: grid; gap: 4px; }
+.rc-steps li { position: relative; padding-left: 18px; font-size: .85rem; color: var(--text-secondary); overflow-wrap: anywhere; }
+.rc-steps li::before { content: ""; position: absolute; left: 3px; top: .5em; width: 7px; height: 7px; border-radius: 50%; background: #c4c7cc; }
+.rc-steps li:not(:last-child)::after { content: ""; position: absolute; left: 6px; top: 1.05em; bottom: -.55em; width: 1px; background: #d8dbe0; }
+.rc-steps li.is-wa { color: #0f6b34; font-weight: 600; }
+.rc-steps li.is-wa::before { background: #25d366; }
 
 @media (max-width: 860px) {
   .kpis { grid-template-columns: repeat(2, 1fr); }
