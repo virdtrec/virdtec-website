@@ -87,8 +87,8 @@ async function query(db, days) {
        WHERE type = 'gallery' AND day >= ?1 GROUP BY k ORDER BY n DESC LIMIT 12`
     ).bind(start),
     db.prepare(
-      `SELECT ts, type, path, source, device, browser, os, city, country
-       FROM hits ORDER BY id DESC LIMIT 25`
+      `SELECT ts, type, path, visitor, source, device, browser, os, city, country
+       FROM hits ORDER BY id DESC LIMIT 120`
     )
   ]);
 
