@@ -1,6 +1,14 @@
 {
-  "updated": "2026-11-13T13:22:31.606Z",
+  "updated": "2026-11-14T06:47:03.029Z",
   "items": [
+    {
+      "id": "mwg1ltgh1uef",
+      "type": "youtube",
+      "youtubeId": "WNjMxi-X_d4",
+      "title": "Jelambar",
+      "location": "Jakarta Barat",
+      "category": "proyek"
+    },
     {
       "id": "mwf0ahyihi0b",
       "type": "youtube",
