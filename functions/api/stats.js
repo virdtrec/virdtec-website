@@ -55,7 +55,7 @@ async function query(db, days) {
   ).bind(start);
   const visitors = 'COUNT(DISTINCT day || visitor)';
 
-  const [totals, daily, sources, devices, locations, browsers, oses, pages, waSources, linkClicks, galleryViews, recent] = await db.batch([
+  const [totals, daily, sources, devices, locations, browsers, oses, pages, waSources, linkClicks, galleryViews, recent, hourly] = await db.batch([
     db.prepare(
       `SELECT SUM(type = 'view') AS views,
               COUNT(DISTINCT CASE WHEN type = 'view' THEN day || visitor END) AS visitors,
@@ -87,9 +87,21 @@ async function query(db, days) {
        WHERE type = 'gallery' AND day >= ?1 GROUP BY k ORDER BY n DESC LIMIT 12`
     ).bind(start),
     db.prepare(
-      `SELECT ts, type, path, visitor, source, device, browser, os, city, country
-       FROM hits ORDER BY id DESC LIMIT 120`
-    )
+      // "Hari ini": semua aktivitas hari ini; rentang lain: 120 aktivitas terakhir
+      days === 1
+        ? `SELECT ts, type, path, visitor, source, device, browser, os, city, country
+           FROM hits WHERE day >= ?1 ORDER BY id DESC LIMIT 3000`
+        : `SELECT ts, type, path, visitor, source, device, browser, os, city, country
+           FROM hits WHERE ?1 IS NOT NULL ORDER BY id DESC LIMIT 120`
+    ).bind(start),
+    // Per jam (WIB) untuk tampilan "Hari ini"
+    db.prepare(
+      `SELECT CAST(strftime('%H', ts / 1000 + 25200, 'unixepoch') AS INTEGER) AS hour,
+              SUM(type = 'view') AS views,
+              COUNT(DISTINCT CASE WHEN type = 'view' THEN visitor END) AS visitors,
+              SUM(type = 'wa') AS wa
+       FROM hits WHERE day = ?1 GROUP BY hour ORDER BY hour`
+    ).bind(today)
   ]);
 
   return {
@@ -102,7 +114,8 @@ async function query(db, days) {
       linkClicks: linkClicks.results,
       galleryViews: galleryViews.results
     },
-    recent: recent.results
+    recent: recent.results,
+    hourly: hourly.results
   };
 }
 

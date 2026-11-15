@@ -176,8 +176,9 @@ h3 { font-size: 1rem; margin: 0 0 .3em; color: var(--ink); }
 .chips { display: flex; gap: 6px; }
 .chip {
   border: 1px solid var(--line); background: #fff; color: var(--ink); font: inherit; font-weight: 600;
-  font-size: .88rem; padding: .45rem .9rem; border-radius: 999px; cursor: pointer;
+  font-size: .88rem; padding: .45rem .9rem; border-radius: 999px; cursor: pointer; white-space: nowrap;
 }
+@media (max-width: 420px) { .chips { gap: 4px; } .chip { padding: .45rem .7rem; font-size: .84rem; } }
 .chip.is-active { background: var(--ink); border-color: var(--ink); color: #fff; }
 .st-refresh { flex: none; width: 38px; }
 
@@ -202,6 +203,7 @@ h3 { font-size: 1rem; margin: 0 0 .3em; color: var(--ink); }
 .cc-cols { position: absolute; left: 40px; right: 0; top: 0; bottom: 26px; display: flex; align-items: stretch; }
 .cc-col { flex: 1; display: flex; align-items: flex-end; justify-content: center; padding: 0 1px; border-radius: 4px 4px 0 0; }
 .cc-col.is-hover { background: rgba(17, 18, 20, .05); }
+.cc-col.is-future { opacity: .35; }
 .cc-bar { width: 100%; max-width: 24px; background: var(--series-1); border-radius: 4px 4px 0 0; }
 .cc-x { position: absolute; left: 40px; right: 0; bottom: 0; height: 20px; font-size: .75rem; color: var(--muted); }
 .cc-x span { position: absolute; transform: translateX(-50%); white-space: nowrap; }
