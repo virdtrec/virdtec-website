@@ -9,10 +9,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
-  <link rel="stylesheet" href="admin.css?v=20261113-1">
+  <link rel="stylesheet" href="admin.css?v=20261115-1">
   <script src="config.js?v=20261109-1"></script>
   <script src="admin.js?v=20261109-1" defer></script>
-  <script src="stats.js?v=20261113-1" defer></script>
+  <script src="stats.js?v=20261115-1" defer></script>
   <script src="../js/link-icons.js?v=20261109-1" defer></script>
   <script src="links.js?v=20261109-3" defer></script>
 </head>
@@ -167,6 +167,7 @@
         </div>
         <div class="st-controls">
           <div class="chips" id="st-range" role="group" aria-label="Rentang waktu">
+            <button class="chip" type="button" data-days="1" aria-pressed="false">Hari ini</button>
             <button class="chip is-active" type="button" data-days="7" aria-pressed="true">7 hari</button>
             <button class="chip" type="button" data-days="30" aria-pressed="false">30 hari</button>
             <button class="chip" type="button" data-days="90" aria-pressed="false">90 hari</button>
@@ -197,14 +198,14 @@
         <section class="kpis" id="st-kpis"></section>
 
         <section class="panel">
-          <h3>Pengunjung per hari</h3>
+          <h3 id="st-chart-title">Pengunjung per hari</h3>
           <p class="muted small">Ketuk atau arahkan ke kolom untuk melihat detail.</p>
           <div class="colchart" id="st-chart" tabindex="0" aria-label="Grafik pengunjung per hari. Gunakan panah kiri/kanan untuk melihat detail."></div>
           <details class="st-table">
             <summary>Lihat sebagai tabel</summary>
             <div class="table-wrap">
               <table>
-                <thead><tr><th>Tanggal</th><th class="n">Pengunjung</th><th class="n">Halaman dilihat</th><th class="n">Klik WhatsApp</th></tr></thead>
+                <thead><tr><th id="st-table-first">Tanggal</th><th class="n">Pengunjung</th><th class="n">Halaman dilihat</th><th class="n">Klik WhatsApp</th></tr></thead>
                 <tbody id="st-table-body"></tbody>
               </table>
             </div>
@@ -224,7 +225,7 @@
         </div>
 
         <section class="panel">
-          <h3>Kunjungan terbaru</h3>
+          <h3 id="st-recent-title">Kunjungan terbaru</h3>
           <ul class="recent" id="st-recent"></ul>
         </section>
       </div>

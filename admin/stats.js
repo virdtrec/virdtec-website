@@ -142,31 +142,62 @@
     return out;
   }
 
+  function fillDaysLabeled(data) {
+    return fillDays(data).map(function (d) {
+      d.label = fmtDay(d.day); d.tip = fmtDay(d.day, { weekday: 'long', year: 'numeric' }); d.row = fmtDay(d.day, { weekday: 'short' });
+      return d;
+    });
+  }
+  function fillHours(data) {
+    var map = {};
+    (data.hourly || []).forEach(function (h) { map[num(h.hour)] = h; });
+    var nowHour = Number(new Date().toLocaleString('en-GB', { timeZone: 'Asia/Jakarta', hour: '2-digit', hour12: false })) % 24;
+    var out = [];
+    for (var h = 0; h < 24; h++) {
+      var d = map[h] || {};
+      var hh = (h < 10 ? '0' : '') + h + '.00';
+      out.push({ label: hh, tip: 'Hari ini, ' + hh + '–' + (h < 9 ? '0' : '') + (h + 1) + '.00 WIB', row: hh,
+                 future: h > nowHour, visitors: num(d.visitors), views: num(d.views), wa: num(d.wa) });
+    }
+    return out;
+  }
+
+  function busiest(series) {
+    var best = null;
+    series.forEach(function (d) { if (d.visitors && (!best || d.visitors > best.visitors)) best = d; });
+    return best ? ['Jam tersibuk', best.label, nf.format(best.visitors) + ' pengunjung'] : ['Jam tersibuk', '–', 'belum ada pengunjung'];
+  }
+
   function render(data) {
-    var series = fillDays(data);
+    var hourly = data.days === 1;
+    var series = hourly ? fillHours(data) : fillDaysLabeled(data);
+    $('st-chart-title').textContent = hourly ? 'Pengunjung per jam (hari ini)' : 'Pengunjung per hari';
+    $('st-table-first').textContent = hourly ? 'Jam' : 'Tanggal';
+    $('st-recent-title').textContent = hourly ? 'Semua kunjungan hari ini' : 'Kunjungan terbaru';
     var t = data.totals || {};
     var visitors = num(t.visitors), views = num(t.views), wa = num(t.wa);
-    var today = series[series.length - 1] || { visitors: 0, views: 0 };
+    var today = hourly ? { visitors: visitors, views: views } : series[series.length - 1] || { visitors: 0, views: 0 };
 
-    $('st-range-text').textContent = fmtDay(data.start, { year: 'numeric' }) + ' – ' + fmtDay(data.today, { year: 'numeric' });
+    $('st-range-text').textContent = hourly ? fmtDay(data.today, { weekday: 'long', year: 'numeric', month: 'long' })
+      : fmtDay(data.start, { year: 'numeric' }) + ' – ' + fmtDay(data.today, { year: 'numeric' });
 
     var kpis = $('st-kpis');
     kpis.textContent = '';
     [
-      ['Pengunjung', visitors, 'rata-rata ' + nf.format(Math.round(visitors / data.days * 10) / 10) + ' per hari'],
+      ['Pengunjung', visitors, hourly ? 'orang berbeda hari ini' : 'rata-rata ' + nf.format(Math.round(visitors / data.days * 10) / 10) + ' per hari'],
       ['Halaman dilihat', views, visitors ? nf.format(Math.round(views / visitors * 10) / 10) + ' halaman per pengunjung' : '–'],
       ['Klik WhatsApp', wa, visitors ? nf.format(Math.round(wa / visitors * 1000) / 10) + '% dari pengunjung' : '–'],
-      ['Hari ini', today.visitors, nf.format(today.views) + ' halaman dilihat']
+      hourly ? busiest(series) : ['Hari ini', today.visitors, nf.format(today.views) + ' halaman dilihat']
     ].forEach(function (k) {
       var tile = el('div', 'kpi');
       tile.appendChild(el('span', 'kpi-label', k[0]));
-      tile.appendChild(el('strong', 'kpi-value', k[1] >= 10000 ? nfc.format(k[1]) : nf.format(k[1])));
+      tile.appendChild(el('strong', 'kpi-value', typeof k[1] === 'string' ? k[1] : k[1] >= 10000 ? nfc.format(k[1]) : nf.format(k[1])));
       tile.appendChild(el('span', 'kpi-sub', k[2]));
       kpis.appendChild(tile);
     });
 
     renderChart(series);
-    renderTable(series);
+    renderTable(hourly ? series.filter(function (d) { return !d.future; }) : series);
 
     var top = data.top || {};
     renderList('st-sources', top.sources, 'pengunjung');
@@ -187,7 +218,7 @@
     renderList('st-links', (top.linkClicks || []).map(function (r) {
       return { k: String(r.k || '').replace(/^\/link → /, ''), n: r.n };
     }), 'klik');
-    renderRecent(data.recent || []);
+    renderRecent(data.recent || [], hourly);
   }
 
   function niceMax(v) {
@@ -214,7 +245,7 @@
 
     var cols = el('div', 'cc-cols');
     series.forEach(function (d) {
-      var col = el('div', 'cc-col');
+      var col = el('div', 'cc-col' + (d.future ? ' is-future' : ''));
       var bar = el('div', 'cc-bar');
       bar.style.height = (d.visitors / max * 100) + '%';
       col.appendChild(bar);
@@ -223,9 +254,10 @@
     box.appendChild(cols);
 
     var xl = el('div', 'cc-x');
-    var idx = series.length > 2 ? [0, Math.floor((series.length - 1) / 2), series.length - 1] : series.map(function (_, i) { return i; });
+    var idx = series.length === 24 ? [0, 6, 12, 18, 23]
+      : series.length > 2 ? [0, Math.floor((series.length - 1) / 2), series.length - 1] : series.map(function (_, i) { return i; });
     idx.forEach(function (i) {
-      var s = el('span', null, fmtDay(series[i].day));
+      var s = el('span', null, series[i].label);
       s.style.left = ((i + 0.5) / series.length * 100) + '%';
       xl.appendChild(s);
     });
@@ -244,7 +276,7 @@
       cols.children[i].classList.add('is-hover');
       var d = series[i];
       tip.textContent = '';
-      tip.appendChild(el('div', 'cc-tip-day', fmtDay(d.day, { weekday: 'long', year: 'numeric' })));
+      tip.appendChild(el('div', 'cc-tip-day', d.tip));
       [[d.visitors, 'pengunjung'], [d.views, 'halaman dilihat'], [d.wa, 'klik WhatsApp']].forEach(function (r) {
         var row = el('div', 'cc-tip-row');
         row.appendChild(el('strong', null, nf.format(r[0])));
@@ -281,7 +313,7 @@
     tb.textContent = '';
     series.slice().reverse().forEach(function (d) {
       var tr = el('tr');
-      tr.appendChild(el('td', null, fmtDay(d.day, { weekday: 'short' })));
+      tr.appendChild(el('td', null, d.row));
       [d.visitors, d.views, d.wa].forEach(function (v) { tr.appendChild(el('td', 'n', nf.format(v))); });
       tb.appendChild(tr);
     });
@@ -309,7 +341,7 @@
 
   // Several events from one person (same daily visitor id, close together) form one visit
   var VISIT_GAP = 30 * 60e3, MAX_VISITS = 25;
-  function groupVisits(rows) {
+  function groupVisits(rows, all) {
     var visits = [], open = {};
     rows.forEach(function (r) { // rows arrive newest first
       var key = (r.visitor || '') + '|' + [r.device, r.os, r.browser, r.city].join('|');
@@ -320,7 +352,7 @@
       if (r.visitor) open[key] = v;
     });
     visits.forEach(function (v) { v.events.reverse(); }); // oldest first inside a visit
-    return visits.slice(0, MAX_VISITS);
+    return all ? visits : visits.slice(0, MAX_VISITS);
   }
   function afterArrow(path) {
     var i = String(path || '').indexOf('→');
@@ -345,11 +377,13 @@
       : { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit' });
   }
 
-  function renderRecent(rows) {
+  function renderRecent(rows, all) {
     var ul = $('st-recent');
     ul.textContent = '';
-    if (!rows.length) { ul.appendChild(el('li', 'muted small', 'Belum ada kunjungan tercatat.')); return; }
-    groupVisits(rows).forEach(function (v) {
+    if (!rows.length) { ul.appendChild(el('li', 'muted small', all ? 'Belum ada kunjungan hari ini.' : 'Belum ada kunjungan tercatat.')); return; }
+    var visits = groupVisits(rows, all);
+    if (all) $('st-recent-title').textContent = 'Semua kunjungan hari ini (' + nf.format(visits.length) + ')';
+    visits.forEach(function (v) {
       var li = el('li', 'rc');
       var hasWa = v.events.some(function (e) { return e.type === 'wa'; });
       var when = fmtTime(v.first, true) + (v.last - v.first >= 60e3 ? '–' + fmtTime(v.last, false) : '') + ' WIB';
