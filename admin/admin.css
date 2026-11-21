@@ -189,13 +189,13 @@ h3 { font-size: 1rem; margin: 0 0 .3em; color: var(--ink); }
 .notice li { margin-bottom: .45rem; }
 .notice p:last-child { margin-bottom: 0; }
 
-.kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+.kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 20px; }
 .kpi { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; display: grid; gap: 2px; }
 .kpi-label { font-size: .85rem; color: var(--text-secondary); font-weight: 600; }
 .kpi-value { font-size: 2rem; font-weight: 700; color: var(--ink); line-height: 1.2; }
 .kpi-sub { font-size: .8rem; color: var(--muted); }
 
-#st-body { display: grid; gap: 20px; }
+#st-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; }
 #st-body .kpis { margin-bottom: 0; }
 
 /* Column chart (single series) */
@@ -229,10 +229,14 @@ h3 { font-size: 1rem; margin: 0 0 .3em; color: var(--ink); }
 .st-table .n { text-align: right; font-variant-numeric: tabular-nums; }
 
 /* Horizontal bar lists */
-.st-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+.st-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
 .hb { display: grid; gap: 12px; margin-top: 12px; }
 .hb-head { display: flex; justify-content: space-between; gap: 12px; font-size: .9rem; margin-bottom: 4px; }
-.hb-label { color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hb-label { flex: 1; min-width: 0; color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hb-value { flex: none; }
+/* Long names (gallery titles, link labels, referrers) must never widen the page */
+#st-body, #st-body > *, .kpis > *, .st-grid > *, .hb, .hb-row, .recent, .rc { min-width: 0; }
+.rc-main, .rc-sub, .kpi-sub { overflow-wrap: anywhere; }
 .hb-value { color: var(--ink); font-weight: 700; font-variant-numeric: tabular-nums; }
 .hb-bar { height: 8px; background: var(--series-1); border-radius: 0 4px 4px 0; }
 
@@ -254,8 +258,8 @@ h3 { font-size: 1rem; margin: 0 0 .3em; color: var(--ink); }
 .rc-steps li.is-wa::before { background: #25d366; }
 
 @media (max-width: 860px) {
-  .kpis { grid-template-columns: repeat(2, 1fr); }
-  .st-grid { grid-template-columns: 1fr; }
+  .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .st-grid { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 720px) {
   .tabs { padding: 0 8px; }
