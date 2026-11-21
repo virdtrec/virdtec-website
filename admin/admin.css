@@ -172,8 +172,11 @@ h3 { font-size: 1rem; margin: 0 0 .3em; color: var(--ink); }
 
 .stats-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
 .stats-head p { margin: 0; }
-.st-controls { display: flex; align-items: center; gap: 8px; }
-.chips { display: flex; gap: 6px; }
+.st-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; max-width: 100%; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+/* the refresh button flows on the same line as the range buttons */
+.st-controls { gap: 6px; }
+.st-controls .chips { display: contents; }
 .chip {
   border: 1px solid var(--line); background: #fff; color: var(--ink); font: inherit; font-weight: 600;
   font-size: .88rem; padding: .45rem .9rem; border-radius: 999px; cursor: pointer; white-space: nowrap;
