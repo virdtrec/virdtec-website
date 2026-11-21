@@ -91,7 +91,8 @@
         x.classList.toggle('is-active', x === b);
         x.setAttribute('aria-pressed', String(x === b));
       });
-      days = Number(b.getAttribute('data-days'));
+      var v = b.getAttribute('data-days');
+      days = v === 'all' ? 'all' : Number(v);
       load();
     });
   });
@@ -162,6 +163,28 @@
     return out;
   }
 
+  function dayDiff(a, b) {
+    return Math.round((Date.parse(b + 'T00:00:00Z') - Date.parse(a + 'T00:00:00Z')) / 86400e3);
+  }
+  function fillMonths(data) {
+    var map = {};
+    (data.monthly || []).forEach(function (m) { map[m.month] = m; });
+    var out = [], y = Number(data.start.slice(0, 4)), mo = Number(data.start.slice(5, 7));
+    var endKey = data.today.slice(0, 7);
+    for (var guard = 0; guard < 24; guard++) {
+      var key = y + '-' + (mo < 10 ? '0' : '') + mo;
+      var d = map[key] || {};
+      var date = key + '-15';
+      out.push({ label: fmtDay(date, { day: undefined, month: 'short', year: '2-digit' }),
+                 tip: fmtDay(date, { day: undefined, month: 'long', year: 'numeric' }),
+                 row: fmtDay(date, { day: undefined, month: 'long', year: 'numeric' }),
+                 visitors: num(d.visitors), views: num(d.views), wa: num(d.wa) });
+      if (key >= endKey) break;
+      mo++; if (mo > 12) { mo = 1; y++; }
+    }
+    return out;
+  }
+
   function busiest(series) {
     var best = null;
     series.forEach(function (d) { if (d.visitors && (!best || d.visitors > best.visitors)) best = d; });
@@ -169,22 +192,31 @@
   }
 
   function render(data) {
-    var hourly = data.days === 1;
-    var series = hourly ? fillHours(data) : fillDaysLabeled(data);
-    $('st-chart-title').textContent = hourly ? 'Pengunjung per jam (hari ini)' : 'Pengunjung per hari';
-    $('st-table-first').textContent = hourly ? 'Jam' : 'Tanggal';
+    var hourly = data.days === 1 && !data.all;
+    var monthly = !!data.all;
+    var series = hourly ? fillHours(data) : monthly ? fillMonths(data) : fillDaysLabeled(data);
+    $('st-chart-title').textContent = hourly ? 'Pengunjung per jam (hari ini)' : monthly ? 'Pengunjung per bulan' : 'Pengunjung per hari';
+    $('st-table-first').textContent = hourly ? 'Jam' : monthly ? 'Bulan' : 'Tanggal';
     $('st-recent-title').textContent = hourly ? 'Semua kunjungan hari ini' : 'Kunjungan terbaru';
     var t = data.totals || {};
     var visitors = num(t.visitors), views = num(t.views), wa = num(t.wa);
-    var today = hourly ? { visitors: visitors, views: views } : series[series.length - 1] || { visitors: 0, views: 0 };
+    var todayRow = (data.daily || []).filter(function (d) { return d.day === data.today; })[0] || {};
+    var today = hourly ? { visitors: visitors, views: views } : { visitors: num(todayRow.visitors), views: num(todayRow.views) };
+
+    // Rata-rata dihitung sejak statistik mulai mencatat, bukan dari awal rentang yang masih kosong
+    var firstDay = data.first_day && data.first_day > data.start ? data.first_day : data.start;
+    var activeDays = Math.max(1, dayDiff(firstDay, data.today) + 1);
+    var avgText = 'rata-rata ' + nf.format(Math.round(visitors / activeDays * 10) / 10) + ' per hari' +
+      (firstDay > data.start ? ' (sejak ' + fmtDay(firstDay) + ')' : '');
 
     $('st-range-text').textContent = hourly ? fmtDay(data.today, { weekday: 'long', year: 'numeric', month: 'long' })
+      : monthly ? 'Sejak awal statistik: ' + fmtDay(data.start, { year: 'numeric' }) + ' – ' + fmtDay(data.today, { year: 'numeric' })
       : fmtDay(data.start, { year: 'numeric' }) + ' – ' + fmtDay(data.today, { year: 'numeric' });
 
     var kpis = $('st-kpis');
     kpis.textContent = '';
     [
-      ['Pengunjung', visitors, hourly ? 'orang berbeda hari ini' : 'rata-rata ' + nf.format(Math.round(visitors / data.days * 10) / 10) + ' per hari'],
+      ['Pengunjung', visitors, hourly ? 'orang berbeda hari ini' : avgText],
       ['Halaman dilihat', views, visitors ? nf.format(Math.round(views / visitors * 10) / 10) + ' halaman per pengunjung' : '–'],
       ['Klik WhatsApp', wa, visitors ? nf.format(Math.round(wa / visitors * 1000) / 10) + '% dari pengunjung' : '–'],
       hourly ? busiest(series) : ['Hari ini', today.visitors, nf.format(today.views) + ' halaman dilihat']

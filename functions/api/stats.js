@@ -44,10 +44,19 @@ async function isAdmin(request, env) {
   return true;
 }
 
-async function query(db, days) {
+function dayDiff(a, b) {
+  return Math.round((Date.parse(b + 'T00:00:00Z') - Date.parse(a + 'T00:00:00Z')) / 86400e3);
+}
+
+// days: angka (1–KEEP_DAYS) atau 'all' = sejak data pertama tercatat
+async function query(db, wanted) {
   const now = Date.now();
-  const start = wibDay(now - (days - 1) * 86400e3);
   const today = wibDay(now);
+  const first = await db.prepare('SELECT MIN(day) AS d FROM hits').first();
+  const firstDay = (first && first.d) || today;
+  const all = wanted === 'all';
+  const days = all ? Math.min(KEEP_DAYS, Math.max(1, dayDiff(firstDay, today) + 1)) : wanted;
+  const start = wibDay(now - (days - 1) * 86400e3);
   const top = (expr, measure, extra = '') => db.prepare(
     `SELECT ${expr} AS k, ${measure} AS n FROM hits
      WHERE type = 'view' AND day >= ?1 ${extra}
@@ -55,7 +64,7 @@ async function query(db, days) {
   ).bind(start);
   const visitors = 'COUNT(DISTINCT day || visitor)';
 
-  const [totals, daily, sources, devices, locations, browsers, oses, pages, waSources, linkClicks, galleryViews, recent, hourly] = await db.batch([
+  const [totals, daily, sources, devices, locations, browsers, oses, pages, waSources, linkClicks, galleryViews, recent, hourly, monthly] = await db.batch([
     db.prepare(
       `SELECT SUM(type = 'view') AS views,
               COUNT(DISTINCT CASE WHEN type = 'view' THEN day || visitor END) AS visitors,
@@ -101,11 +110,19 @@ async function query(db, days) {
               COUNT(DISTINCT CASE WHEN type = 'view' THEN visitor END) AS visitors,
               SUM(type = 'wa') AS wa
        FROM hits WHERE day = ?1 GROUP BY hour ORDER BY hour`
-    ).bind(today)
+    ).bind(today),
+    // Per bulan untuk tampilan "Sejak awal" (pengunjung = jumlah pengunjung unik harian)
+    db.prepare(
+      `SELECT substr(day, 1, 7) AS month,
+              SUM(type = 'view') AS views,
+              COUNT(DISTINCT CASE WHEN type = 'view' THEN day || visitor END) AS visitors,
+              SUM(type = 'wa') AS wa
+       FROM hits WHERE day >= ?1 GROUP BY month ORDER BY month`
+    ).bind(start)
   ]);
 
   return {
-    days, start, today,
+    days, start, today, all, first_day: firstDay,
     totals: totals.results[0] || { views: 0, visitors: 0, wa: 0 },
     daily: daily.results,
     top: {
@@ -115,7 +132,8 @@ async function query(db, days) {
       galleryViews: galleryViews.results
     },
     recent: recent.results,
-    hourly: hourly.results
+    hourly: hourly.results,
+    monthly: monthly.results
   };
 }
 
@@ -123,7 +141,8 @@ export async function onRequestGet({ request, env, waitUntil }) {
   if (!(await isAdmin(request, env))) return json({ error: 'unauthorized' }, 401);
   if (!env.DB) return json({ error: 'no_db' }, 503);
 
-  const days = Math.min(365, Math.max(1, parseInt(new URL(request.url).searchParams.get('days'), 10) || 30));
+  const raw = new URL(request.url).searchParams.get('days');
+  const days = raw === 'all' ? 'all' : Math.min(KEEP_DAYS, Math.max(1, parseInt(raw, 10) || 30));
   let data;
   try {
     data = await query(env.DB, days);
