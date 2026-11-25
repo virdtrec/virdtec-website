@@ -3,7 +3,14 @@
  * Hanya untuk admin: header "Authorization: Bearer <token GitHub>" dicek ke
  * GitHub, dan pemilik token harus ada di daftar ADMIN_GITHUB_USERS.
  */
-import { ensureSchema, wibDay } from './hit.js';
+import { ensureSchema, wibDay, SOURCE_ALIASES } from './hit.js';
+
+// Older rows were stored as typed (instagram, instagram`, youtube); fold them into one name per channel
+const Q = "'";
+const SOURCE_SQL = 'CASE lower(replace(replace(replace(trim(COALESCE(source, ' + Q + Q + ')), char(96), ' + Q + Q +
+  '), char(39), ' + Q + Q + '), char(34), ' + Q + Q + '))' +
+  Object.keys(SOURCE_ALIASES).map((k) => ' WHEN ' + Q + k + Q + ' THEN ' + Q + SOURCE_ALIASES[k] + Q).join('') +
+  ' ELSE source END';
 
 const DEFAULT_ADMINS = 'virdtrec';
 const KEEP_DAYS = 400;
@@ -77,14 +84,14 @@ async function query(db, wanted) {
               SUM(type = 'wa') AS wa
        FROM hits WHERE day >= ?1 GROUP BY day ORDER BY day`
     ).bind(start),
-    top('source', visitors),
+    top(SOURCE_SQL, visitors),
     top('device', visitors),
     top(`COALESCE(city, '') || '|' || COALESCE(country, '')`, visitors),
     top('browser', visitors),
     top('os', visitors),
     top('path', 'COUNT(*)'),
     db.prepare(
-      `SELECT source AS k, COUNT(*) AS n FROM hits
+      `SELECT ${SOURCE_SQL} AS k, COUNT(*) AS n FROM hits
        WHERE type = 'wa' AND day >= ?1 GROUP BY k ORDER BY n DESC LIMIT 8`
     ).bind(start),
     db.prepare(
@@ -98,9 +105,9 @@ async function query(db, wanted) {
     db.prepare(
       // "Hari ini": semua aktivitas hari ini; rentang lain: 120 aktivitas terakhir
       days === 1
-        ? `SELECT ts, type, path, visitor, source, device, browser, os, city, country
+        ? `SELECT ts, type, path, visitor, ${SOURCE_SQL} AS source, device, browser, os, city, country
            FROM hits WHERE day >= ?1 ORDER BY id DESC LIMIT 3000`
-        : `SELECT ts, type, path, visitor, source, device, browser, os, city, country
+        : `SELECT ts, type, path, visitor, ${SOURCE_SQL} AS source, device, browser, os, city, country
            FROM hits WHERE ?1 IS NOT NULL ORDER BY id DESC LIMIT 120`
     ).bind(start),
     // Per jam (WIB) untuk tampilan "Hari ini"

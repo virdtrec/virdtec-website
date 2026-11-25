@@ -41,8 +41,23 @@ function hostOf(url) {
   try { return new URL(url).hostname.replace(/^www\./, '').toLowerCase(); } catch (e) { return ''; }
 }
 
+// One name per channel: utm_source=instagram / IG / instagram` and an instagram.com referrer
+// must all count as "Instagram", otherwise the same channel shows up twice in the admin.
+export const SOURCE_ALIASES = {
+  instagram: 'Instagram', ig: 'Instagram',
+  facebook: 'Facebook', fb: 'Facebook',
+  youtube: 'YouTube', yt: 'YouTube',
+  tiktok: 'TikTok', tt: 'TikTok',
+  whatsapp: 'WhatsApp', wa: 'WhatsApp',
+  google: 'Google'
+};
+export function cleanUtm(utm) {
+  return String(utm || '').trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9._-]/g, '').slice(0, 40);
+}
+
 function sourceOf(utm, ref) {
-  if (utm) return utm.slice(0, 40);
+  utm = cleanUtm(utm);
+  if (utm) return SOURCE_ALIASES[utm] || utm;
   if (!ref) return 'Langsung';
   const rules = [
     [/(^|\.)google\./, 'Google'], [/bing\.com$/, 'Bing'], [/yahoo\./, 'Yahoo'], [/duckduckgo/, 'DuckDuckGo'],
