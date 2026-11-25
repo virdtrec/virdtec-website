@@ -185,10 +185,15 @@
     return out;
   }
 
+  // Several hours can share the top count: show them all instead of silently picking the first
   function busiest(series) {
-    var best = null;
-    series.forEach(function (d) { if (d.visitors && (!best || d.visitors > best.visitors)) best = d; });
-    return best ? ['Jam tersibuk', best.label, nf.format(best.visitors) + ' pengunjung'] : ['Jam tersibuk', '–', 'belum ada pengunjung'];
+    var top = Math.max.apply(null, series.map(function (d) { return d.visitors; }));
+    if (!top) return ['Jam tersibuk', '–', 'belum ada pengunjung'];
+    var hours = series.filter(function (d) { return d.visitors === top; }).map(function (d) { return d.label; });
+    var unit = nf.format(top) + ' pengunjung';
+    if (hours.length === 1) return ['Jam tersibuk', hours[0], unit];
+    if (hours.length <= 3) return ['Jam tersibuk', hours.join(' · '), 'sama ramai, masing-masing ' + unit, 'is-small'];
+    return ['Jam tersibuk', hours.length + ' jam', 'sama ramai (' + hours.join(', ') + '), masing-masing ' + unit, 'is-small'];
   }
 
   function render(data) {
@@ -223,7 +228,7 @@
     ].forEach(function (k) {
       var tile = el('div', 'kpi');
       tile.appendChild(el('span', 'kpi-label', k[0]));
-      tile.appendChild(el('strong', 'kpi-value', typeof k[1] === 'string' ? k[1] : k[1] >= 10000 ? nfc.format(k[1]) : nf.format(k[1])));
+      tile.appendChild(el('strong', 'kpi-value' + (k[3] ? ' ' + k[3] : ''), typeof k[1] === 'string' ? k[1] : k[1] >= 10000 ? nfc.format(k[1]) : nf.format(k[1])));
       tile.appendChild(el('span', 'kpi-sub', k[2]));
       kpis.appendChild(tile);
     });
@@ -254,9 +259,10 @@
   }
 
   function niceMax(v) {
-    if (v <= 5) return 5;
+    if (v <= 2) return 2;
+    if (v <= 10) return Math.ceil(v / 2) * 2;   // even, so the middle line is a whole number
     var p = Math.pow(10, Math.floor(Math.log10(v)));
-    var steps = [1, 2, 2.5, 5, 10];
+    var steps = [1, 2, 4, 6, 8, 10];
     for (var i = 0; i < steps.length; i++) if (steps[i] * p >= v) return steps[i] * p;
     return 10 * p;
   }
