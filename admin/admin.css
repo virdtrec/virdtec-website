@@ -193,6 +193,7 @@ h3 { font-size: 1rem; margin: 0 0 .3em; color: var(--ink); }
 .kpi { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; display: grid; gap: 2px; }
 .kpi-label { font-size: .85rem; color: var(--text-secondary); font-weight: 600; }
 .kpi-value { font-size: 2rem; font-weight: 700; color: var(--ink); line-height: 1.2; }
+.kpi-value.is-small { font-size: 1.25rem; line-height: 1.35; padding: .2rem 0; }
 .kpi-sub { font-size: .8rem; color: var(--muted); }
 
 #st-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; }
@@ -266,6 +267,7 @@ h3 { font-size: 1rem; margin: 0 0 .3em; color: var(--ink); }
   .stats-head { align-items: flex-start; }
   .kpi { padding: 12px 14px; }
   .kpi-value { font-size: 1.6rem; }
+  .kpi-value.is-small { font-size: 1.1rem; }
   .colchart { height: 180px; padding-left: 34px; }
   .cc-grid, .cc-cols, .cc-x { left: 34px; }
 }
