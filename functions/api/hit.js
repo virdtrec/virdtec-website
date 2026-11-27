@@ -6,7 +6,7 @@
  */
 
 // Hanya browser sungguhan yang menjalankan JavaScript yang mengirim data; ini menyaring bot yang tersisa
-const BOT = /bot|crawl|spider|slurp|headless|lighthouse|pagespeed|python|curl|wget|httpclient/i;
+export const BOT = /bot|crawl|spider|slurp|headless|lighthouse|pagespeed|python|curl|wget|httpclient|facebookexternalhit|meta-externalagent|whatsapp\/|telegram|discord|slack|skype|preview/i;
 
 const SCHEMA = [
   `CREATE TABLE IF NOT EXISTS hits (
@@ -109,7 +109,7 @@ async function getSalt(db) {
   return (await db.prepare("SELECT v FROM meta WHERE k = 'salt'").first()).v;
 }
 
-async function record(db, request, body) {
+export async function record(db, request, body) {
   const ua = request.headers.get('user-agent') || '';
   const ip = request.headers.get('cf-connecting-ip') || '';
   const cf = request.cf || {};
