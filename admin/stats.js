@@ -68,6 +68,8 @@
   }
   function renderSelf() {
     var p = prefs();
+    // Same choice for the WhatsApp links /wa-yt, /wa-ig, ... (counted on the server)
+    try { var on = !!(p.ok && p.noTrack); document.cookie = 'virdtec_no_track=' + (on ? '1' : '') + '; Path=/; Max-Age=' + (on ? 63072000 : 0) + '; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : ''); } catch (e) { /* abaikan */ }
     var box = $('st-self');
     box.hidden = !p.ok;
     if (!p.ok) return;
@@ -404,7 +406,7 @@
     return p;
   }
   function eventLabel(r) {
-    if (r.type === 'wa') return 'Klik WhatsApp';
+    if (r.type === 'wa') return /^\/wa-/.test(String(r.path || '')) ? 'Klik WhatsApp (link di profil ' + (r.source || '') + ')' : 'Klik WhatsApp';
     if (r.type === 'link') return 'Klik link bio: ' + (afterArrow(r.path) || '-');
     if (r.type === 'gallery') return 'Buka galeri: ' + (afterArrow(r.path) || '-');
     return 'Melihat ' + pageName(r.path);

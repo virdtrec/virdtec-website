@@ -116,6 +116,7 @@
 
     // Statistik (menu Statistik di /admin) + Meta Pixel — sama seperti halaman utama.
     function noTrack() { try { return !!localStorage.getItem('virdtec_no_track'); } catch (e) { return false; } }
+    (function (on) { try { document.cookie = 'virdtec_no_track=' + (on ? '1' : '') + '; Path=/; Max-Age=' + (on ? 63072000 : 0) + '; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : ''); } catch (e) { /* abaikan */ } })(noTrack());
     function track(type, label) {
       if (noTrack()) return;
       if (location.protocol !== 'https:' && location.hostname !== 'localhost') return;

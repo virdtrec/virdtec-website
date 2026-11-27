@@ -63,6 +63,8 @@
         localStorage.setItem(PREF, 'set');
         if (v) localStorage.setItem(KEY, '1'); else localStorage.removeItem(KEY);
       } catch (e) { ok = false; }
+      // Same choice for the WhatsApp links /wa-yt, /wa-ig, ... (counted on the server)
+      try { var on = v && ok; document.cookie = 'virdtec_no_track=' + (on ? '1' : '') + '; Path=/; Max-Age=' + (on ? 63072000 : 0) + '; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : ''); } catch (e) { /* abaikan */ }
     }
     // Membuka halaman ini otomatis = jangan hitung (kecuali datang dari tombol "Hitung lagi")
     if (!/[?&]hitung=1/.test(location.search)) set(true);

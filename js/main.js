@@ -282,10 +282,13 @@
   });
 
   // ---------- Statistik pengunjung (dibaca di /admin → Statistik) ----------
-  // Tanpa cookie. Admin bisa menonaktifkan pencatatan untuk perangkatnya sendiri.
+  // Pengunjung biasa tidak diberi cookie. Perangkat admin yang memilih "jangan hitung" diberi
+  // cookie virdtec_no_track agar link WhatsApp /wa-yt dst. (dihitung di server) ikut dilewati.
   function noTrack() {
     try { return !!localStorage.getItem('virdtec_no_track'); } catch (e) { return false; }
   }
+  // The WhatsApp links /wa-yt, /wa-ig, ... are counted on the server, which only sees cookies
+  (function (on) { try { document.cookie = 'virdtec_no_track=' + (on ? '1' : '') + '; Path=/; Max-Age=' + (on ? 63072000 : 0) + '; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : ''); } catch (e) { /* abaikan */ } })(noTrack());
   function track(type, path) {
     if (noTrack()) return;
     if (location.protocol !== 'https:' && location.hostname !== 'localhost') return;
