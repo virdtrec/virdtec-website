@@ -291,7 +291,8 @@
   (function (on) { try { document.cookie = 'virdtec_no_track=' + (on ? '1' : '') + '; Path=/; Max-Age=' + (on ? 63072000 : 0) + '; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : ''); } catch (e) { /* abaikan */ } })(noTrack());
   function track(type, path) {
     if (noTrack()) return;
-    if (location.protocol !== 'https:' && location.hostname !== 'localhost') return;
+    // Only the live site (and local testing) is counted; Cloudflare preview links are not
+    if (!/(^|\.)virdtec\.com$/.test(location.hostname) && location.hostname !== 'localhost') return;
     var utm = '';
     try { utm = new URLSearchParams(location.search).get('utm_source') || ''; } catch (e) { /* abaikan */ }
     var data = JSON.stringify({ t: type, p: path || location.pathname, r: document.referrer, u: utm });

@@ -119,7 +119,7 @@
     (function (on) { try { document.cookie = 'virdtec_no_track=' + (on ? '1' : '') + '; Path=/; Max-Age=' + (on ? 63072000 : 0) + '; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : ''); } catch (e) { /* abaikan */ } })(noTrack());
     function track(type, label) {
       if (noTrack()) return;
-      if (location.protocol !== 'https:' && location.hostname !== 'localhost') return;
+      if (!/(^|\.)virdtec\.com$/.test(location.hostname) && location.hostname !== 'localhost') return;
       var utm = '';
       try { utm = new URLSearchParams(location.search).get('utm_source') || ''; } catch (e) { /* abaikan */ }
       var data = JSON.stringify({ t: type, p: label ? '/link → ' + label.slice(0, 80) : '/link', r: document.referrer, u: utm });

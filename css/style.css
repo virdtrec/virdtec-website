@@ -264,6 +264,42 @@ p { margin: 0 0 1em; }
 .site-footer p { margin: .3rem 0; }
 .site-footer .muted { color: rgba(255,255,255,.5); font-size: .85rem; }
 
+/* Harga */
+.prices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; align-items: stretch; }
+.price-card {
+  position: relative; display: flex; flex-direction: column; background: #fff; border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 30px 26px 26px; box-shadow: 0 10px 30px rgba(17,18,20,.06);
+}
+.price-card h3 { font-size: 1.2rem; margin: 14px 0 .4em; }
+.price-desc { color: var(--muted); margin: 0 0 18px; font-size: .95rem; }
+.price-icon { width: 56px; height: 56px; border-radius: 14px; display: grid; place-items: center; background: rgba(227,6,19,.08); color: var(--red); }
+.price-icon svg { width: 28px; height: 28px; }
+.price-icon img { width: 40px; height: 40px; object-fit: contain; }
+.price { margin: auto 0 20px; padding-top: 16px; border-top: 1px dashed var(--line); display: grid; gap: 2px; }
+.price-from { font-size: .82rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.price strong { font-size: clamp(1.7rem, 3vw, 2.1rem); color: var(--ink); letter-spacing: -.02em; line-height: 1.15; }
+.price strong span { font-size: .55em; font-weight: 700; color: var(--muted); margin-left: 2px; }
+.price strong.price-text { font-size: 1.45rem; }
+.price-note { font-size: .9rem; color: var(--muted); }
+.price-card .btn { justify-content: center; width: 100%; }
+.btn-outline { border: 2px solid var(--ink); color: var(--ink); background: transparent; }
+.btn-outline:hover { background: var(--ink); color: #fff; }
+.price-card.is-featured { background: var(--ink); border-color: var(--ink); color: rgba(255,255,255,.85); box-shadow: 0 18px 40px rgba(17,18,20,.28); transform: translateY(-8px); }
+.price-card.is-featured h3, .price-card.is-featured .price strong { color: #fff; }
+.price-card.is-featured .price-desc, .price-card.is-featured .price-from, .price-card.is-featured .price strong span { color: rgba(255,255,255,.7); }
+.price-card.is-featured .price-desc strong { color: #fff; }
+.price-card.is-featured .price { border-color: rgba(255,255,255,.18); }
+.price-card.is-featured .price-icon { background: #fff; }
+.price-badge {
+  position: absolute; top: -13px; left: 26px; background: var(--red); color: #fff; font-size: .78rem; font-weight: 700;
+  letter-spacing: .04em; padding: 5px 12px; border-radius: 999px; box-shadow: 0 6px 16px rgba(227,6,19,.35);
+}
+.price-foot { text-align: center; color: var(--muted); margin: 28px auto 0; max-width: 640px; font-size: .95rem; }
+@media (max-width: 960px) {
+  .prices { grid-template-columns: minmax(0, 1fr); max-width: 520px; margin: 0 auto; gap: 26px; }
+  .price-card.is-featured { transform: none; order: -1; }
+}
+
 /* WhatsApp floating button */
 .wa-float {
   position: fixed; right: 20px; bottom: 20px; z-index: 60;
