@@ -9,7 +9,7 @@
   var $ = function (id) { return document.getElementById(id); };
   var NO_TRACK = 'virdtec_no_track';
   var TRACK_PREF = 'virdtec_track_pref';
-  var days = 7;
+  var days = 1; // default: Hari ini
   var loaded = false;
   var nf = new Intl.NumberFormat('id-ID');
   var nfc = new Intl.NumberFormat('id-ID', { notation: 'compact', maximumFractionDigits: 1 });
